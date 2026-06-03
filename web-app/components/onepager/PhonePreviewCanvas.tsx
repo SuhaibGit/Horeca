@@ -43,6 +43,7 @@ export default function PhonePreviewCanvas() {
         const newIndex = items.findIndex((i) => i.id === over.id);
         return arrayMove(items, oldIndex, newIndex);
       });
+
     }
   };
 
