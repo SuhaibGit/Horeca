@@ -103,6 +103,7 @@ export default function ReservationsView() {
   const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
   const [deleteConfirmBookingId, setDeleteConfirmBookingId] = useState<string | null>(null);
+  const [cancelConfirmBookingId, setCancelConfirmBookingId] = useState<string | null>(null);
 
   const [newCustName, setNewCustName] = useState("");
   const [newCustPhone, setNewCustPhone] = useState("");
@@ -227,6 +228,10 @@ export default function ReservationsView() {
 
   const handleDeleteBooking = (id: string) => {
     setDeleteConfirmBookingId(id);
+  };
+
+  const handleCancelReservation = (id: string) => {
+    setCancelConfirmBookingId(id);
   };
 
   const handleEditBooking = (booking: Reservation) => {
@@ -392,6 +397,7 @@ export default function ReservationsView() {
         onEdit={handleEditBooking}
         onDelete={handleDeleteBooking}
         onUpdateStatus={handleUpdateStatus}
+        onCancelReservation={handleCancelReservation}
       />
 
       {isAddModalOpen && (
@@ -632,10 +638,10 @@ export default function ReservationsView() {
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-[16px] font-bold text-zinc-900 dark:text-white leading-tight">
-                    Cancel Booking?
+                    Delete Booking?
                   </h4>
                   <p className="text-[12px] font-medium text-zinc-500 dark:text-zinc-400 leading-normal max-w-[280px]">
-                    Are you sure you want to cancel this booking? This action cannot be undone.
+                    Are you sure you want to delete this booking? This action cannot be undone.
                   </p>
                 </div>
               </div>
@@ -666,6 +672,70 @@ export default function ReservationsView() {
                   );
                   setSelectedBooking(null);
                   setDeleteConfirmBookingId(null);
+                }}
+                className="px-6 py-2 rounded-full bg-[#E25C5C] hover:bg-[#D14B4B] text-white text-[12.5px] font-semibold shadow-md transition-all cursor-pointer"
+              >
+                Delete Booking
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {cancelConfirmBookingId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center select-none p-4">
+          <div
+            onClick={() => setCancelConfirmBookingId(null)}
+            className="fixed inset-0 bg-[#092219]/40 backdrop-blur-xs transition-opacity animate-fade-in cursor-pointer"
+            aria-hidden
+          />
+
+          <div className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-[24px] shadow-2xl p-6 z-10 animate-fade-in border border-zinc-150/45 dark:border-zinc-800 flex flex-col gap-5">
+            <div className="flex gap-4 items-start justify-between">
+              <div className="flex gap-3.5 items-start">
+                <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-950/20 text-[#E25C5C] flex items-center justify-center shrink-0 relative">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-[16px] font-bold text-zinc-900 dark:text-white leading-tight">
+                    Cancel Booking?
+                  </h4>
+                  <p className="text-[12px] font-medium text-zinc-500 dark:text-zinc-400 leading-normal max-w-[280px]">
+                    Are you sure you want to cancel this booking? This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCancelConfirmBookingId(null)}
+                className="p-1 rounded-full text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-250 cursor-pointer transition-colors"
+              >
+                <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setCancelConfirmBookingId(null)}
+                className="px-6 py-2 rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-350 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-[12.5px] font-semibold transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  handleUpdateStatus(cancelConfirmBookingId, "Cancelled");
+                  setCancelConfirmBookingId(null);
                 }}
                 className="px-6 py-2 rounded-full bg-[#E25C5C] hover:bg-[#D14B4B] text-white text-[12.5px] font-semibold shadow-md transition-all cursor-pointer"
               >

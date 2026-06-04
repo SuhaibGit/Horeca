@@ -14,6 +14,7 @@ interface ReservationDetailDrawerProps {
   onEdit: (booking: Reservation) => void;
   onDelete: (id: string) => void;
   onUpdateStatus: (id: string, status: Reservation["status"]) => void;
+  onCancelReservation: (id: string) => void;
 }
 
 function statusBadgeClass(status: Reservation["status"]): string {
@@ -67,6 +68,7 @@ export default function ReservationDetailDrawer({
   onEdit,
   onDelete,
   onUpdateStatus,
+  onCancelReservation,
 }: ReservationDetailDrawerProps) {
   useEffect(() => {
     if (!isOpen) onCloseActionsMenu();
@@ -94,7 +96,7 @@ export default function ReservationDetailDrawer({
             </button>
             <button
               type="button"
-              onClick={() => onUpdateStatus(booking.id, "Cancelled")}
+              onClick={() => onCancelReservation(booking.id)}
               className="w-full py-2.5 rounded-full border border-[#0A46A6] dark:border-red-950/40 text-red-650 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:border-red-200 text-[12px] font-bold uppercase tracking-wider flex items-center justify-center transition-all cursor-pointer"
             >
               Cancel Reservation
