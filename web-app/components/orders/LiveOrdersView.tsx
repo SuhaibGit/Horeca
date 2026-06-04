@@ -100,7 +100,7 @@ export default function LiveOrdersView() {
         {displayPills.map((item, idx) => (
           <span
             key={idx}
-            className={`px-2.5 py-0.5 text-[11px] font-bold rounded-lg ${pillStyles[idx % pillStyles.length]}`}
+            className={`px-2.5 py-0.5 text-[12px]  rounded-[21px] ${pillStyles[idx % pillStyles.length]}`}
           >
             {item.quantity}x {item.name}
           </span>
@@ -128,11 +128,10 @@ export default function LiveOrdersView() {
       header: "Type",
       render: (order) => (
         <span
-          className={`text-[13px] font-semibold ${
-            order.orderType === "Delivery"
-              ? "text-[#0A46A6]"
-              : "text-zinc-700 dark:text-zinc-300"
-          }`}
+          className={`text-[13px] font-semibold ${order.orderType === "Delivery"
+            ? "text-[#0A46A6]"
+            : "text-zinc-700 dark:text-zinc-300"
+            }`}
         >
           {order.orderType}
         </span>
@@ -208,7 +207,7 @@ export default function LiveOrdersView() {
       render: (order) => {
         const style = getStatusStyles(order.status);
         return (
-          <span className={`px-2.5 py-0.5 text-[11px] font-bold rounded-full ${style.bg} ${style.text} uppercase tracking-wider`}>
+          <span className={`px-2.5 py-0.5 text-[14px] font-medium rounded-full ${style.bg} ${style.text}  tracking-wider`}>
             {style.label}
           </span>
         );
@@ -276,11 +275,10 @@ export default function LiveOrdersView() {
                   setActiveFilter(tab);
                   setSearchQuery("");
                 }}
-                className={`px-4 py-2 rounded-[8px] text-[16px] font-medium transition-all duration-200 select-none cursor-pointer ${
-                  isSelected
-                    ? "bg-linear-to-l from-[#041B40] to-[#0A46A6] text-white shadow-xs"
-                    : "bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-450 shadow-sm hover:bg-zinc-50 dark:hover:bg-zinc-800"
-                }`}
+                className={`px-4 py-2 rounded-[8px] text-[16px] font-medium transition-all duration-200 select-none cursor-pointer ${isSelected
+                  ? "bg-linear-to-l from-[#041B40] to-[#0A46A6] text-white shadow-xs"
+                  : "bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-450 shadow-sm hover:bg-zinc-50 dark:hover:bg-zinc-800"
+                  }`}
               >
                 {tab}
               </button>
@@ -290,11 +288,10 @@ export default function LiveOrdersView() {
           <button
             type="button"
             onClick={() => setFilterDrawerOpen(true)}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-[8px] text-[16px] font-medium transition-all duration-200 select-none cursor-pointer bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 shadow-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 border ${
-              hasActiveSideFilters
-                ? "border-[#0A46A6]/40 text-[#0A46A6]"
-                : "border-transparent"
-            }`}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-[8px] text-[16px] font-medium transition-all duration-200 select-none cursor-pointer bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 shadow-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 border ${hasActiveSideFilters
+              ? "border-[#0A46A6]/40 text-[#0A46A6]"
+              : "border-transparent"
+              }`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path

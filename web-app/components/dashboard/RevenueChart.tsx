@@ -104,7 +104,7 @@ export default function RevenueChart({
         <div className="relative">
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 border border-zinc-200 dark:border-zinc-800 rounded-xl bg-zinc-50/50 dark:bg-zinc-900/40 text-[12px] font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100/50 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 border border-zinc-200 dark:border-zinc-800 rounded-xl   text-[12px] font-medium text-[#25292A] transition-all cursor-pointer"
           >
             <span>{activeTimeframe}</span>
             <svg
@@ -124,7 +124,7 @@ export default function RevenueChart({
                 <button
                   key={idx}
                   onClick={() => handleTimeframeClick(tf)}
-                  className={`w-full text-left px-3.5 py-2 text-[12px] font-bold hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors cursor-pointer ${tf === activeTimeframe ? "bg-zinc-50/80 dark:bg-zinc-700/30 text-[#0A46A6]" : "text-zinc-600 dark:text-zinc-300"
+                  className={`w-full text-left px-3.5 py-2 text-[12px] font-medium hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors cursor-pointer ${tf === activeTimeframe ? "bg-zinc-50/80 dark:bg-zinc-700/30 text-[#0A46A6]" : "text-zinc-600 dark:text-zinc-300"
                     }`}
                 >
                   {tf}
@@ -199,11 +199,12 @@ export default function RevenueChart({
               <circle
                 cx={pt.x}
                 cy={pt.y}
-                r={hoveredIndex === idx ? 5.5 : 3.5}
-                fill={hoveredIndex === idx ? "#0A46A6" : "#ffffff"}
+                r={5.5}
+                fill="#ffffff"
                 stroke="#0A46A6"
-                strokeWidth={hoveredIndex === idx ? 3.5 : 2}
-                className="transition-all duration-200"
+                strokeWidth={3.5}
+                opacity={hoveredIndex === idx ? 1 : 0}
+                className="transition-all duration-200 pointer-events-none"
               />
             </g>
           ))}
