@@ -220,10 +220,10 @@ export default function InventoryView() {
       {items.length > 0 ? (
         <>
           <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <StatCard title="Total Inventory Items" value={stats.totalItems.toString()} iconType="orders" />
-            <StatCard title="Low Stock" value={stats.lowStock.toString()} iconType="reservations" />
-            <StatCard title="Out of Stock" value={stats.outOfStock.toString()} iconType="revenue" />
-            <StatCard title="Expiring Soon" value={stats.expiringSoon.toString()} iconType="value" />
+            <StatCard title="Total Inventory Items" value={stats.totalItems.toString()} compare={true} />
+            <StatCard title="Low Stock" value={stats.lowStock.toString()} compare={true} />
+            <StatCard title="Out of Stock" value={stats.outOfStock.toString()} compare={true} />
+            <StatCard title="Expiring Soon" value={stats.expiringSoon.toString()} compare={true} />
           </section>
 
           <section>
