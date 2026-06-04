@@ -6,6 +6,7 @@ import {
   FILTER_STATUS_OPTIONS,
   FILTER_TYPE_OPTIONS,
   type LiveOrdersFilterState,
+  type LiveOrderType,
 } from "../../data/mockOrders";
 
 export const DEFAULT_LIVE_ORDERS_FILTERS: LiveOrdersFilterState = {
@@ -101,11 +102,12 @@ export default function LiveOrdersFilterDrawer({
   };
 
   const toggleType = (value: string) => {
+    const typeValue = value as LiveOrderType;
     setDraft((prev) => ({
       ...prev,
-      types: prev.types.includes(value)
-        ? prev.types.filter((t) => t !== value)
-        : [...prev.types, value],
+      types: prev.types.includes(typeValue)
+        ? prev.types.filter((t) => t !== typeValue)
+        : [...prev.types, typeValue],
     }));
   };
 
@@ -116,7 +118,7 @@ export default function LiveOrdersFilterDrawer({
       isOpen={isOpen}
       onClose={onClose}
       title="Filters"
-      maxWidthClass="max-w-[400px]"
+      maxWidthClass="max-w-[293px]"
       headerActions={
         <button
           type="button"
@@ -132,7 +134,7 @@ export default function LiveOrdersFilterDrawer({
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-[13px] font-bold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="px-5 py-2.5 rounded-[100px] border border-zinc-200 dark:border-zinc-700 text-[13px] font-bold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -142,7 +144,7 @@ export default function LiveOrdersFilterDrawer({
               onApply(draft);
               onClose();
             }}
-            className="px-5 py-2.5 rounded-xl bg-linear-to-r from-[#041B40] to-[#0A46A6] text-white text-[13px] font-bold hover:opacity-95 transition-opacity cursor-pointer"
+            className="px-5 py-2.5 rounded-[100px] bg-linear-to-r from-[#041B40] to-[#0A46A6] text-white text-[13px] font-bold hover:opacity-95 transition-opacity cursor-pointer"
           >
             Apply Filter
           </button>
