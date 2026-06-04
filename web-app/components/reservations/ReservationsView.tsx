@@ -419,23 +419,23 @@ export default function ReservationsView() {
             </div>
 
             <form onSubmit={handleSubmitBooking} className="space-y-4">
-              <div>
-                <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
-                  Customer Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={newCustName}
-                  onChange={(e) => setNewCustName(e.target.value)}
-                  placeholder="e.g. Maria Barbara"
-                  className="w-full px-3 py-2 text-[12.5px] font-semibold text-zinc-800 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0A46A6]"
-                />
-              </div>
-
               <div className="grid grid-cols-2 gap-3">
+
                 <div>
-                  <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
+                  <label className="text-[14px] font-medium text-[#454545] dark:text-zinc-500  tracking-wider block mb-1">
+                    Customer Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newCustName}
+                    onChange={(e) => setNewCustName(e.target.value)}
+                    placeholder="e.g. Maria Barbara"
+                    className="w-full px-3 py-2 text-[12.5px] font-semibold text-zinc-800 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0A46A6]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[14px] font-medium text-[#454545] dark:text-zinc-500  tracking-wider block mb-1">
                     Phone
                   </label>
                   <input
@@ -446,8 +446,12 @@ export default function ReservationsView() {
                     className="w-full px-3 py-2 text-[12.5px] font-semibold text-zinc-800 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0A46A6]"
                   />
                 </div>
-                <div>
-                  <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+
+                {/* <div>
+                  <label className="text-[14px] font-medium text-[#454545] dark:text-zinc-500  tracking-wider block mb-1">
                     Email
                   </label>
                   <input
@@ -457,29 +461,13 @@ export default function ReservationsView() {
                     placeholder="maria@gmail.com"
                     className="w-full px-3 py-2 text-[12.5px] font-semibold text-zinc-850 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0A46A6]"
                   />
-                </div>
+                </div> */}
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="relative">
-                  <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
-                    Assign Table
-                  </label>
-                  <select
-                    value={newCustTable}
-                    onChange={(e) => setNewCustTable(e.target.value)}
-                    className="w-full appearance-none px-3 py-2 text-[12.5px] font-semibold text-zinc-800 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-xl cursor-pointer"
-                  >
-                    {TABLE_OPTIONS.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.name} ({t.capacity})
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-9 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
-                </div>
+
                 <div>
-                  <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
+                  <label className="text-[14px] font-medium text-[#454545] dark:text-zinc-500  tracking-wider block mb-1">
                     Guests Count
                   </label>
                   <input
@@ -490,11 +478,27 @@ export default function ReservationsView() {
                     className="w-full px-3 py-2 text-[12.5px] font-semibold text-zinc-800 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0A46A6]"
                   />
                 </div>
+                <div className="relative">
+                  <label className="text-[14px] font-medium text-[#454545] dark:text-zinc-500  tracking-wider block mb-1">
+                    Guest Tag
+                  </label>
+                  <select
+                    value={newCustGuestTag}
+                    onChange={(e) =>
+                      setNewCustGuestTag(e.target.value as Reservation["guestTag"])
+                    }
+                    className="w-full appearance-none px-3 py-2 text-[12.5px] font-semibold text-zinc-800 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-xl cursor-pointer"
+                  >
+                    <option value="VIP">VIP</option>
+                    <option value="Regular">Regular</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-7 translate-y-1/2 h-4 w-4 text-[#454545] pointer-events-none" />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
+                  <label className="text-[14px] font-medium text-[#454545] dark:text-zinc-500  tracking-wider block mb-1">
                     Date
                   </label>
                   <input
@@ -505,7 +509,7 @@ export default function ReservationsView() {
                   />
                 </div>
                 <div className="relative">
-                  <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
+                  <label className="text-[14px] font-medium text-[#454545] dark:text-zinc-500  tracking-wider block mb-1">
                     Time Slot
                   </label>
                   <select
@@ -522,29 +526,14 @@ export default function ReservationsView() {
                     <option value="20:00-21:00">20:00 - 21:00</option>
                     <option value="21:00-22:00">21:00 - 22:00</option>
                   </select>
-                  <ChevronDown className="absolute right-3 top-9 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
+                  <ChevronDown className="absolute right-3 top-7 translate-y-1/2 h-4 w-4 text-[#454545] pointer-events-none" />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="relative">
-                  <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
-                    Guest Tag
-                  </label>
-                  <select
-                    value={newCustGuestTag}
-                    onChange={(e) =>
-                      setNewCustGuestTag(e.target.value as Reservation["guestTag"])
-                    }
-                    className="w-full appearance-none px-3 py-2 text-[12.5px] font-semibold text-zinc-800 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-xl cursor-pointer"
-                  >
-                    <option value="VIP">VIP</option>
-                    <option value="Regular">Regular</option>
-                  </select>
-                  <ChevronDown className="absolute right-3 top-9 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
-                </div>
-                <div className="relative">
-                  <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
+
+                {/* <div className="relative">
+                  <label className="text-[14px] font-medium text-[#454545] dark:text-zinc-500  tracking-wider block mb-1">
                     Initial Status
                   </label>
                   <select
@@ -558,12 +547,28 @@ export default function ReservationsView() {
                     <option value="Pending">Pending</option>
                     <option value="Cancelled">Cancelled</option>
                   </select>
-                  <ChevronDown className="absolute right-3 top-9 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
-                </div>
+                  <ChevronDown className="absolute right-3 top-7 translate-y-1/2 h-4 w-4 text-[#454545] pointer-events-none" />
+                </div> */}
               </div>
-
+              <div className="relative">
+                <label className="text-[14px] font-medium text-[#454545] dark:text-zinc-500  tracking-wider block mb-1">
+                  Assign Table
+                </label>
+                <select
+                  value={newCustTable}
+                  onChange={(e) => setNewCustTable(e.target.value)}
+                  className="w-full appearance-none px-3 py-2 text-[12.5px] font-semibold text-zinc-800 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-xl cursor-pointer"
+                >
+                  {TABLE_OPTIONS.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name} ({t.capacity})
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-7 translate-y-1/2 h-4 w-4 text-[#454545] pointer-events-none" />
+              </div>
               <div>
-                <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
+                <label className="text-[14px] font-medium text-[#454545] dark:text-zinc-500  tracking-wider block mb-1">
                   Special Requests / Notes
                 </label>
                 <textarea
