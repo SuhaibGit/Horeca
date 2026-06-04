@@ -780,7 +780,7 @@ export default function MenuManagementPage() {
             </div>
 
             {/* Three-step progress layout */}
-            <div className="bg-white dark:bg-zinc-900 shadow-md rounded-3xl p-5 flex flex-col md:flex-row items-center justify-around gap-6  shadow-xs">
+            <div className=" shadow-md rounded-3xl p-5 flex flex-col md:flex-row items-center justify-around gap-6 shadow-none">
               {[
                 { step: 1, title: "Menu", desc: currentStep === 1 ? "In Progress" : "Completed" },
                 { step: 2, title: "Modifier", desc: currentStep === 2 ? "In Progress" : currentStep > 2 ? "Completed" : "Upcoming" },
@@ -790,7 +790,7 @@ export default function MenuManagementPage() {
                 const isCompleted = currentStep > node.step;
 
                 return (
-                  <div key={node.step} className="flex items-center gap-4">
+                  <div key={node.step} className="flex flex-col  items-center gap-4">
                     <div
                       className={`w-9 h-9 rounded-full flex items-center justify-center text-[16px] font-semibold  transition-all ${isCurrent
                         ? "bg-linear-to-r from-[#041B40] to-[#0A46A6]  text-white scale-105"
@@ -805,7 +805,7 @@ export default function MenuManagementPage() {
                         node.step
                       )}
                     </div>
-                    <div className="flex flex-col leading-none">
+                    <div className="flex flex-col justify-center items-center  leading-none">
                       <span className={`text-[16px] font-semibold  tracking-tight ${isCurrent || isCompleted ? "text-[#1D1D1F]" : "text-[#1D1D1F]"}`}>
                         {node.title}
                       </span>
