@@ -174,22 +174,24 @@ export default function CustomersView() {
           <StatCard
             title="Total Customer"
             value={mockCustomerStats.totalCustomers.toString()}
-            iconType="orders"
+            compare={true}
           />
           <StatCard
             title="New This Month"
             value={mockCustomerStats.newThisMonth.toString()}
-            iconType="reservations"
+            compare={true}
+
           />
           <StatCard
             title="Avg Lifetime Value"
             value={mockCustomerStats.avgLifetimeValue}
-            iconType="revenue"
+            compare={true}
           />
           <StatCard
             title="Repeat Rate"
             value={mockCustomerStats.repeatRate}
-            iconType="value"
+            compare={true}
+
           />
         </section>
       )}

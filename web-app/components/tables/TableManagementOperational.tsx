@@ -116,14 +116,13 @@ export default function TableManagementOperational({
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Total Tables" value={String(floorStats.total)} iconType="orders" />
-        <StatCard title="Available" value={String(floorStats.available)} iconType="reservations" />
+        <StatCard title="Total Tables" value={String(floorStats.total)} compare={true} />
+        <StatCard title="Available" value={String(floorStats.available)} compare={true} />
         <StatCard
           title="Occupied"
           value={`${floorStats.occupiedSeats} / ${floorStats.totalSeats || 0}`}
-          iconType="revenue"
-        />
-        <StatCard title="Reserved" value={String(floorStats.reserved)} iconType="value" />
+          compare={true} />
+        <StatCard title="Reserved" value={String(floorStats.reserved)} compare={true} />
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4">

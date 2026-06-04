@@ -243,21 +243,25 @@ export default function LiveOrdersView() {
           title="Active Order"
           value={mockLiveOrderStats.activeOrders.toString()}
           iconType="orders"
+          compare={true}
         />
         <StatCard
           title="Order In Progress"
           value={mockLiveOrderStats.ordersInProgress.toString()}
           iconType="revenue"
+          compare={true}
         />
         <StatCard
           title="Tables"
           value={mockLiveOrderStats.tablesOccupied.toString()}
           iconType="reservations"
+          compare={true}
         />
         <StatCard
           title="Avg Order Value"
           value={mockLiveOrderStats.avgOrderValue}
           iconType="value"
+          compare={true}
         />
       </section>
 

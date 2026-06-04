@@ -11,12 +11,14 @@ export interface StatCardProps {
   comparisonLabel?: string;
   iconType?: "revenue" | "orders" | "reservations" | "value";
   className?: string;
+  compare?: boolean;
 }
 
 export default function StatCard({
   title,
   value,
   change,
+  compare = false,
   isPositive = true,
   comparisonLabel = "vs last month",
   iconType,
@@ -157,7 +159,7 @@ export default function StatCard({
             )}
             {change}
           </span>)}
-          {comparisonLabel && (
+          {!compare && comparisonLabel && (
             <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-semibold uppercase">
               {comparisonLabel}
             </span>

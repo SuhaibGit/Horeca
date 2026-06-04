@@ -348,8 +348,17 @@ export default function MenuManagementPage() {
     );
   };
 
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
   const handleUploadClick = () => {
-    setMealImage("https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80");
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setMealImage(URL.createObjectURL(file));
+    }
   };
 
   const handleStep1Submit = (e: React.FormEvent) => {
@@ -844,6 +853,13 @@ export default function MenuManagementPage() {
                       Meal Image
                     </label>
 
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
                     <div
                       onClick={handleUploadClick}
                       className="relative w-full h-48 border-2 border-dashed border-zinc-250 dark:border-zinc-800 hover:border-[#0A46A6] rounded-2xl cursor-pointer flex flex-col items-center justify-center transition-all overflow-hidden bg-zinc-50/50 dark:bg-zinc-900/30"
@@ -1137,7 +1153,7 @@ export default function MenuManagementPage() {
               {currentStep === 2 && (
                 <div className="space-y-6">
 
-                  <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800/60 pb-4 ">
+                  <div className="flex items-center justify-between  ">
                     <h2 className="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight">
                       Modifier & Customization
                     </h2>
@@ -1152,7 +1168,7 @@ export default function MenuManagementPage() {
                   {/* Modifiers Fields Form */}
                   <div className="space-y-5">
                     <div>
-                      <label className="text-[11px] font-black text-zinc-400 dark:text-zinc-550 uppercase tracking-wider block mb-1">
+                      <label className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                         Modifier Group Name
                       </label>
                       <input
@@ -1165,7 +1181,7 @@ export default function MenuManagementPage() {
                     </div>
 
                     <div>
-                      <label className="text-[11px] font-black text-zinc-400 dark:text-zinc-550 uppercase tracking-wider block mb-1">
+                      <label className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                         Description
                       </label>
                       <textarea
@@ -1181,7 +1197,7 @@ export default function MenuManagementPage() {
 
                       {/* Selection type dropdown */}
                       <div className="relative">
-                        <label className="text-[11px] font-black text-zinc-400 dark:text-zinc-550 uppercase tracking-wider block mb-1">
+                        <label className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                           Selection Type
                         </label>
                         <button
@@ -1217,7 +1233,7 @@ export default function MenuManagementPage() {
                       {/* Required Field with toggle */}
                       <div className="flex items-center justify-between border border-zinc-200 dark:border-zinc-750 rounded-xl px-4 py-2.5 bg-white dark:bg-zinc-800 ">
                         <div className="flex flex-col leading-none py-1">
-                          <span className="text-[11px] font-black text-zinc-400 dark:text-zinc-550 uppercase tracking-wider block mb-1">
+                          <span className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                             Required
                           </span>
                           <span className="text-[11px] font-extrabold text-zinc-500 dark:text-zinc-450 uppercase">
@@ -1239,7 +1255,7 @@ export default function MenuManagementPage() {
                     {/* Min / Max Selection inputs */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 ">
                       <div>
-                        <label className="text-[11px] font-black text-zinc-400 dark:text-zinc-550 uppercase tracking-wider block mb-1">
+                        <label className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                           Min Selection
                         </label>
                         <input
@@ -1251,7 +1267,7 @@ export default function MenuManagementPage() {
                       </div>
 
                       <div>
-                        <label className="text-[11px] font-black text-zinc-400 dark:text-zinc-550 uppercase tracking-wider block mb-1">
+                        <label className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                           Max Selection
                         </label>
                         <input
@@ -1447,7 +1463,7 @@ export default function MenuManagementPage() {
               {currentStep === 3 && (
                 <div className="space-y-6">
 
-                  <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800/60 pb-4 ">
+                  <div className="flex items-center justify-between  ">
                     <h2 className="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight">
                       Review & Confirm
                     </h2>
@@ -1462,14 +1478,22 @@ export default function MenuManagementPage() {
                   {/* Block 1: Meal Items Summary card */}
                   <div className="space-y-3.5">
                     <div className="flex items-center justify-between ">
-                      <h3 className="text-[13px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+                      <h3 className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                         Meal Items Summary
                       </h3>
                       <button
                         onClick={() => setCurrentStep(1)}
-                        className="px-3.5 py-1 border border-zinc-200 dark:border-zinc-800 rounded-lg text-[11.5px] font-black text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 cursor-pointer flex items-center gap-1 "
+                        className="px-3.5 py-1 border border-[#0A46A6]  rounded-lg text-[14px] font-medium text-[#0A46A6] dark:text-zinc-300 hover:bg-zinc-50 cursor-pointer flex items-center gap-1 "
                       >
-                        ✏️ Edit
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                          <path d="M17.7586 5.73214L14.268 2.24073C14.1519 2.12463 14.0141 2.03253 13.8624 1.96969C13.7107 1.90685 13.5482 1.87451 13.384 1.87451C13.2198 1.87451 13.0572 1.90685 12.9056 1.96969C12.7539 2.03253 12.6161 2.12463 12.5 2.24073L2.86641 11.8751C2.74983 11.9908 2.65741 12.1284 2.59451 12.2801C2.5316 12.4318 2.49948 12.5945 2.50001 12.7587V16.2501C2.50001 16.5816 2.6317 16.8996 2.86612 17.134C3.10054 17.3684 3.41849 17.5001 3.75001 17.5001H7.24141C7.40563 17.5006 7.5683 17.4685 7.71999 17.4056C7.87168 17.3427 8.00935 17.2503 8.12501 17.1337L17.7586 7.5001C17.8747 7.38403 17.9668 7.24622 18.0296 7.09454C18.0925 6.94286 18.1248 6.7803 18.1248 6.61612C18.1248 6.45194 18.0925 6.28937 18.0296 6.1377C17.9668 5.98602 17.8747 5.84821 17.7586 5.73214ZM7.24141 16.2501H3.75001V12.7587L10.625 5.8837L14.1164 9.3751L7.24141 16.2501ZM15 8.49073L11.5086 5.0001L13.3836 3.1251L16.875 6.61573L15 8.49073Z" fill="url(#paint0_linear_779_41849)" />
+                          <defs>
+                            <linearGradient id="paint0_linear_779_41849" x1="2.5" y1="1.87451" x2="26.34" y2="9.64912" gradientUnits="userSpaceOnUse">
+                              <stop stopColor="#041B40" />
+                              <stop offset="1" stopColor="#0A46A6" />
+                            </linearGradient>
+                          </defs>
+                        </svg>Edit
                       </button>
                     </div>
 
@@ -1546,14 +1570,22 @@ export default function MenuManagementPage() {
                   {/* Block 2: Modifier Groups list (Screenshot 5 visual layout!) */}
                   <div className="space-y-3.5">
                     <div className="flex items-center justify-between ">
-                      <h3 className="text-[13px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+                      <h3 className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                         Modifier Group
                       </h3>
                       <button
                         onClick={() => setCurrentStep(2)}
-                        className="px-3.5 py-1 border border-zinc-200 dark:border-zinc-800 rounded-lg text-[11.5px] font-black text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 cursor-pointer flex items-center gap-1 "
+                        className="px-3.5 py-1 border border-[#0A46A6]  rounded-lg text-[14px] font-medium text-[#0A46A6] dark:text-zinc-300 hover:bg-zinc-50 cursor-pointer flex items-center gap-1 "
                       >
-                        ✏️ Edit
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                          <path d="M17.7586 5.73214L14.268 2.24073C14.1519 2.12463 14.0141 2.03253 13.8624 1.96969C13.7107 1.90685 13.5482 1.87451 13.384 1.87451C13.2198 1.87451 13.0572 1.90685 12.9056 1.96969C12.7539 2.03253 12.6161 2.12463 12.5 2.24073L2.86641 11.8751C2.74983 11.9908 2.65741 12.1284 2.59451 12.2801C2.5316 12.4318 2.49948 12.5945 2.50001 12.7587V16.2501C2.50001 16.5816 2.6317 16.8996 2.86612 17.134C3.10054 17.3684 3.41849 17.5001 3.75001 17.5001H7.24141C7.40563 17.5006 7.5683 17.4685 7.71999 17.4056C7.87168 17.3427 8.00935 17.2503 8.12501 17.1337L17.7586 7.5001C17.8747 7.38403 17.9668 7.24622 18.0296 7.09454C18.0925 6.94286 18.1248 6.7803 18.1248 6.61612C18.1248 6.45194 18.0925 6.28937 18.0296 6.1377C17.9668 5.98602 17.8747 5.84821 17.7586 5.73214ZM7.24141 16.2501H3.75001V12.7587L10.625 5.8837L14.1164 9.3751L7.24141 16.2501ZM15 8.49073L11.5086 5.0001L13.3836 3.1251L16.875 6.61573L15 8.49073Z" fill="url(#paint0_linear_779_41849)" />
+                          <defs>
+                            <linearGradient id="paint0_linear_779_41849" x1="2.5" y1="1.87451" x2="26.34" y2="9.64912" gradientUnits="userSpaceOnUse">
+                              <stop stopColor="#041B40" />
+                              <stop offset="1" stopColor="#0A46A6" />
+                            </linearGradient>
+                          </defs>
+                        </svg>Edit
                       </button>
                     </div>
 
