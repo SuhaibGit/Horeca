@@ -825,8 +825,8 @@ export default function MenuManagementPage() {
               {currentStep === 1 && (
                 <form onSubmit={handleStep1Submit} className="space-y-6">
 
-                  <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800/60 pb-4 ">
-                    <h2 className="text-[16px] font-black text-zinc-900 dark:text-white uppercase tracking-tight">
+                  <div className="flex items-center justify-between  ">
+                    <h2 className="text-[24px] font-semibold text-[#121212]">
                       Add Menu Item
                     </h2>
                     <button
@@ -840,7 +840,7 @@ export default function MenuManagementPage() {
 
                   {/* Meal Image drag drop */}
                   <div className="space-y-2 ">
-                    <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block">
+                    <label className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                       Meal Image
                     </label>
 
@@ -877,7 +877,7 @@ export default function MenuManagementPage() {
                   {/* Form fields layout */}
                   <div className="grid grid-cols-1 gap-5">
                     <div>
-                      <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
+                      <label className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                         Item Name
                       </label>
                       <input
@@ -891,7 +891,7 @@ export default function MenuManagementPage() {
                     </div>
 
                     <div>
-                      <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
+                      <label className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                         Description
                       </label>
                       <textarea
@@ -905,7 +905,7 @@ export default function MenuManagementPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
+                        <label className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                           Price (AED)
                         </label>
                         <input
@@ -919,7 +919,7 @@ export default function MenuManagementPage() {
                       </div>
 
                       <div className="relative">
-                        <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
+                        <label className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                           Category
                         </label>
                         <button
@@ -955,7 +955,7 @@ export default function MenuManagementPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="relative">
-                        <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
+                        <label className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                           Serving Period
                         </label>
                         <button
@@ -1001,7 +1001,7 @@ export default function MenuManagementPage() {
                       </div>
 
                       <div className="relative">
-                        <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
+                        <label className="text-[14px] font-medium text-[#333839] tracking-wider block mb-1">
                           Fulfillment Type
                         </label>
                         <button
@@ -1051,11 +1051,11 @@ export default function MenuManagementPage() {
                               key={tag.name}
                               type="button"
                               onClick={() => handleTagToggle(tag.name)}
-                              className={`px-3 py-1.5 rounded-full text-[11.5px] font-extrabold border transition-all flex items-center gap-1.5 cursor-pointer ${isSelected
+                              className={`px-3 py-1.5 rounded-[8px] text-[14px] font-medium border transition-all flex items-center gap-1.5 cursor-pointer ${isSelected
                                 ? tag.name === "Chef's Pick"
                                   ? "border-[#F59E0B] bg-amber-50 dark:bg-amber-950/20 text-[#B45309]"
                                   : "border-[#10B981] bg-emerald-50 dark:bg-emerald-950/20 text-[#10B981]"
-                                : "border-zinc-200 dark:border-zinc-800 text-zinc-505 hover:bg-zinc-50 dark:hover:bg-zinc-850"
+                                : "border-[#E7E7E7] bg-[#F6F6F6] text-[#121212]"
                                 }`}
                             >
                               {tag.icon && <span className="text-[11.5px]">{tag.icon}</span>}
@@ -1080,9 +1080,9 @@ export default function MenuManagementPage() {
                               key={allergen}
                               type="button"
                               onClick={() => handleAllergenToggle(allergen)}
-                              className={`px-4 py-2 rounded-full text-[11.5px] font-extrabold border transition-all cursor-pointer ${isSelected
+                              className={`px-4 py-2 rounded-[8px] text-[14px] font-medium border transition-all cursor-pointer ${isSelected
                                 ? "bg-[#D1ECFF] dark:bg-emerald-950/30 text-[#0A46A6] border-[#0A46A6]"
-                                : "bg-zinc-50/50 dark:bg-zinc-900/40 text-zinc-550 dark:text-zinc-450 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100/50"
+                                : "border-[#E7E7E7] bg-[#F6F6F6] text-[#121212]"
                                 }`}
                             >
                               {allergen}
@@ -1093,7 +1093,7 @@ export default function MenuManagementPage() {
                     </div>
 
                     {/* Availability switch */}
-                    <div className="flex items-center justify-between border-t border-zinc-150/40 dark:border-zinc-800/80 pt-4 ">
+                    <div className="flex items-center justify-between  ">
                       <div className="flex items-center gap-2">
                         <svg className="w-5 h-5 text-[#0A46A6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -1106,7 +1106,7 @@ export default function MenuManagementPage() {
                       <button
                         type="button"
                         onClick={() => setMarkAvailable(!markAvailable)}
-                        className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-200 focus:outline-none cursor-pointer ${markAvailable ? "bg-[#0A46A6]" : "bg-zinc-200 dark:bg-zinc-700"}`}
+                        className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-200 focus:outline-none cursor-pointer ${markAvailable ? "bg-linear-to-r from-[#041B40] to-[#0A46A6]" : "bg-zinc-200 dark:bg-zinc-700"}`}
                       >
                         <div className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-200 ${markAvailable ? "translate-x-5" : "translate-x-0"}`} />
                       </button>
