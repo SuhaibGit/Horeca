@@ -70,21 +70,10 @@ export default function DashboardLayout({
 
   const isOnePagerRoute = pathname?.includes("/onepager");
   const isBuilderMode = pathname?.includes("/onepager/builder");
+  const isTablesRoute = pathname?.includes("/dashboard/tables");
 
-  if (isBuilderMode) {
-    return (
-      <BranchContext.Provider value={{ activeBranchId, setActiveBranchId }}>
-        <FloorPlanProvider>
-          {children}
-        </FloorPlanProvider>
-      </BranchContext.Provider>
-    );
-  }
-
-  return (
-    <BranchContext.Provider value={{ activeBranchId, setActiveBranchId }}>
-      <FloorPlanProvider>
-        <div className="flex h-full min-h-0 w-full bg-zinc-50 dark:bg-zinc-950 font-sans transition-colors duration-300 overflow-hidden">
+  const dashboardShell = (
+    <div className="flex h-full min-h-0 w-full bg-zinc-50 dark:bg-zinc-950 font-sans transition-colors duration-300 overflow-hidden">
 
           {/* 1. SIDEBAR (DESKTOP) */}
           <Sidebar
@@ -139,7 +128,21 @@ export default function DashboardLayout({
             </main>
           </div>
         </div>
-      </FloorPlanProvider>
+  );
+
+  if (isBuilderMode) {
+    return (
+      <BranchContext.Provider value={{ activeBranchId, setActiveBranchId }}>
+        {children}
+      </BranchContext.Provider>
+    );
+  }
+
+  const content = (
+    <BranchContext.Provider value={{ activeBranchId, setActiveBranchId }}>
+      {dashboardShell}
     </BranchContext.Provider>
   );
+
+  return isTablesRoute ? <FloorPlanProvider>{content}</FloorPlanProvider> : content;
 }

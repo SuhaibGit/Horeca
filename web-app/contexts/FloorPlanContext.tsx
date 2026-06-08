@@ -30,8 +30,24 @@ interface FloorPlanContextValue {
 }
 
 const STORAGE_KEY = "horeca-floor-plans-v2";
+/** ~500 KB base64 cap — larger blueprints blow up memory and localStorage. */
+const MAX_BLUEPRINT_DATA_URL_LENGTH = 700_000;
 
 const FloorPlanContext = createContext<FloorPlanContextValue | null>(null);
+
+function sanitizeFloors(floors: RestaurantFloor[]): RestaurantFloor[] {
+  return floors.map((floor) => {
+    const blueprint = floor.blueprintImage;
+    if (
+      blueprint &&
+      blueprint.startsWith("data:") &&
+      blueprint.length > MAX_BLUEPRINT_DATA_URL_LENGTH
+    ) {
+      return { ...floor, blueprintImage: null };
+    }
+    return floor;
+  });
+}
 
 function loadFloors(): RestaurantFloor[] {
   if (typeof window === "undefined") return [];
@@ -40,7 +56,7 @@ function loadFloors(): RestaurantFloor[] {
       localStorage.getItem(STORAGE_KEY) ??
       localStorage.getItem("horeca-floor-plans-v1");
     if (!raw) return [];
-    return JSON.parse(raw) as RestaurantFloor[];
+    return sanitizeFloors(JSON.parse(raw) as RestaurantFloor[]);
   } catch {
     return [];
   }
@@ -48,7 +64,7 @@ function loadFloors(): RestaurantFloor[] {
 
 function saveFloors(floors: RestaurantFloor[]) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(floors));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitizeFloors(floors)));
 }
 
 export function FloorPlanProvider({ children }: { children: React.ReactNode }) {
@@ -64,7 +80,9 @@ export function FloorPlanProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (hydrated) saveFloors(floors);
+    if (!hydrated) return;
+    const timer = window.setTimeout(() => saveFloors(floors), 600);
+    return () => window.clearTimeout(timer);
   }, [floors, hydrated]);
 
   const activeFloor = floors.find((f) => f.id === activeFloorId) ?? null;

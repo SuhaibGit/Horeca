@@ -202,6 +202,12 @@ export default function TableManagementPage() {
   const handleBlueprintUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file?.type.startsWith("image/")) return;
+    if (file.size > 500 * 1024) {
+      setToastMessage("Blueprint image must be under 500 KB.");
+      setShowToast(true);
+      e.target.value = "";
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") setFloorPlanImage(reader.result);
