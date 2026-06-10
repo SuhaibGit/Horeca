@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { ASSET_CACHE_VERSION } from "./lib/staticAsset";
 
 const nextConfig: NextConfig = {
   images: {
@@ -6,6 +7,16 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+    ],
+    localPatterns: [
+      {
+        pathname: "/**",
+        search: "",
+      },
+      {
+        pathname: "/**",
+        search: `?v=${ASSET_CACHE_VERSION}`,
       },
     ],
   },
