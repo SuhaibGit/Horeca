@@ -39,7 +39,7 @@ function PlatformBadge({ name }: { name: string }) {
 const ReviewsSummary = ({ data }: ReviewsSummaryProps) => {
   return (
     <section className="bg-[#F3F4F6] px-4 py-8">
-      <h2 className="mb-5 text-center text-[22px] font-medium tracking-tight text-[#111827]">
+      <h2 className="mb-5 text-center text-[20px] font-semibold tracking-tight ">
         {data.title}
       </h2>
 

@@ -17,7 +17,7 @@ export const mainPageData: MainPageData = {
   },
   actions: [
     { id: "a1", label: "View Menu", icon: "book-open", href: "/menu" },
-    { id: "a2", label: "Order Online", icon: "order-online", href: "/order" },
+    { id: "a2", label: "Order Online", icon: "order-online", href: "/order/cart" },
     { id: "a3", label: "Reserve Table", icon: "calendar", href: "/reserve" },
     { id: "a4", label: "Shop Retail", icon: "store", href: "/shop" },
     { id: "a5", label: "Special Offer", icon: "gift", href: "/offers" },

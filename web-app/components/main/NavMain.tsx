@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Share2, ShoppingBag } from "lucide-react";
 import { HeaderInfo } from "./types";
 
@@ -28,13 +29,13 @@ const NavMain = ({ data }: NavMainProps) => {
           </button>
         )}
         {data.showCartButton && (
-          <button
-            type="button"
+          <Link
+            href="/order/cart"
             aria-label="Cart"
             className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#0B2870] shadow-sm"
           >
             <ShoppingBag className="h-4 w-4" />
-          </button>
+          </Link>
         )}
       </div>
     </header>
