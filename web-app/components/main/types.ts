@@ -32,14 +32,9 @@ export interface QuickAction {
 
 export interface Promotion {
   id: string;
-  partner: string;
-  title: string;
-  subtitle: string;
-  validity: string;
-  buttonText: string;
-  buttonHref?: string;
   imageUrl: string;
-  themeColor: string;
+  alt?: string;
+  href?: string;
 }
 
 export interface PlatformRating {

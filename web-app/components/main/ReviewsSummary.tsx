@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import FloralLeaf from "./FloralLeaf";
 import { ReviewsSummaryData } from "./types";
 
 interface ReviewsSummaryProps {
@@ -36,64 +37,83 @@ function PlatformBadge({ name }: { name: string }) {
 }
 
 const ReviewsSummary = ({ data }: ReviewsSummaryProps) => {
-  const fullStars = Math.round(data.averageRating);
-
   return (
-    <section className="px-4 py-6">
-      <h2 className="mb-4 text-center font-serif text-xl text-[#1E293B]">{data.title}</h2>
+    <section className="bg-[#F3F4F6] px-4 py-8">
+      <h2 className="mb-5 text-center text-[22px] font-medium tracking-tight text-[#111827]">
+        {data.title}
+      </h2>
 
-      <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-        <div
-          className="relative px-6 py-8 text-center"
+      <div className="relative overflow-hidden rounded-[32px] bg-white">
+        {/* pale yellow blobs */}
+        {/* <div
+          className="pointer-events-none absolute inset-0"
           style={{
-            backgroundImage:
-              "radial-gradient(circle at 0% 0%, rgba(148,163,184,0.08) 0%, transparent 45%), radial-gradient(circle at 100% 0%, rgba(148,163,184,0.08) 0%, transparent 45%), radial-gradient(circle at 0% 100%, rgba(148,163,184,0.08) 0%, transparent 45%), radial-gradient(circle at 100% 100%, rgba(148,163,184,0.08) 0%, transparent 45%)",
+            background:
+              "radial-gradient(circle at 12% 18%, rgba(255,249,230,0.9) 0%, transparent 42%), radial-gradient(circle at 88% 82%, rgba(255,249,230,0.75) 0%, transparent 40%)",
           }}
-        >
-          <div className="mb-3 flex items-center justify-center gap-1">
+        /> */}
+
+        {/* corner floral decorations */}
+        <FloralLeaf className="pointer-events-none absolute left-0 top-0 h-[97px] w-[82px] opacity-[0.22]" />
+        <FloralLeaf className="pointer-events-none absolute bottom-0 right-0 h-[97px] w-[82px] rotate-180 opacity-[0.22]" />
+
+        <div className="relative z-10 px-6 py-10 text-center">
+          {/* stars */}
+          <div className="mb-4 flex items-center justify-center gap-1.5">
             {Array.from({ length: 5 }).map((_, index) => (
               <Star
                 key={index}
-                className={`h-5 w-5 ${
-                  index < fullStars ? "fill-[#EAB308] text-[#EAB308]" : "text-gray-200"
-                }`}
+                className="h-7 w-7 fill-[#FBC02D] text-[#FBC02D]"
+                strokeWidth={0}
               />
             ))}
           </div>
 
-          <p className="text-3xl font-bold text-[#0F172A]">
+          {/* average rating */}
+          <p className="text-[32px] font-bold leading-tight text-[#111827]">
             {data.averageRating.toFixed(1)}{" "}
-            <span className="text-base font-semibold text-[#334155]">Average Rating</span>
+            <span className="text-[22px] font-semibold">Average Rating</span>
           </p>
 
-          <div className="my-4 flex items-center gap-3">
-            <div className="h-px flex-1 bg-gray-200" />
-            <span className="text-xs text-gray-400">✦</span>
-            <div className="h-px flex-1 bg-gray-200" />
+          {/* divider with leaf icon */}
+          <div className="mx-auto my-5 flex w-[68%] max-w-[240px] items-center gap-3">
+            <div className="h-px flex-1 bg-[#5F5C7C]" />
+            <FloralLeaf className="h-[22px] w-[18px] shrink-0 opacity-100" />
+            <div className="h-px flex-1 bg-[#5F5C7C]" />
           </div>
 
-          <p className="text-sm text-gray-500">
+          {/* review count */}
+          <p className="text-[15px] font-medium text-[#111827]">
             Based on {formatReviewCount(data.totalReviews)} Reviews
           </p>
         </div>
 
-        <div className="grid grid-cols-2 divide-x divide-gray-100 border-t border-gray-100 bg-[#FAFAFA]">
-          {data.platforms.map((platform) => (
-            <div key={platform.id} className="flex items-center justify-center gap-2 px-3 py-3">
-              {platform.logoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={platform.logoUrl} alt={platform.name} className="h-5 w-5 object-contain" />
-              ) : (
-                <PlatformBadge name={platform.name} />
-              )}
-              <span className="text-xs font-medium text-[#334155]">{platform.name}</span>
-              <Star className="h-3.5 w-3.5 fill-[#EAB308] text-[#EAB308]" />
-              <span className="text-xs font-semibold text-[#0F172A]">
-                {platform.rating.toFixed(1)}
-              </span>
-            </div>
-          ))}
-        </div>
+        {data.platforms.length > 0 && (
+          <div className="relative z-10 grid grid-cols-2 divide-x divide-gray-100 border-t border-gray-100 bg-[#FAFAFA]">
+            {data.platforms.map((platform) => (
+              <div
+                key={platform.id}
+                className="flex items-center justify-center gap-2 px-3 py-3"
+              >
+                {platform.logoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={platform.logoUrl}
+                    alt={platform.name}
+                    className="h-5 w-5 object-contain"
+                  />
+                ) : (
+                  <PlatformBadge name={platform.name} />
+                )}
+                <span className="text-xs font-medium text-[#334155]">{platform.name}</span>
+                <Star className="h-3.5 w-3.5 fill-[#FBC02D] text-[#FBC02D]" strokeWidth={0} />
+                <span className="text-xs font-semibold text-[#111827]">
+                  {platform.rating.toFixed(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

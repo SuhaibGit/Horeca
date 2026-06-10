@@ -11,7 +11,7 @@ interface MainPageProps {
 
 const MainPage = ({ data }: MainPageProps) => {
   return (
-    <div className="w-full min-h-full bg-white">
+    <div className="w-full min-h-full bg-[#FAFAFA]">
       <Hero restaurant={data.restaurant} header={data.header} />
       <QuickActions actions={data.actions} />
       <PromotionsCarousel promotions={data.promotions} />
