@@ -3,10 +3,11 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Pencil, Plus, Wallet } from "lucide-react";
+import { MapPin, Pencil, Plus, Wallet } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { guestMenuPageData, guestPaymentMethods } from "@/data/guestOrderData";
 import { formatPrice } from "@/lib/cart";
+import DeliveryAddressSheet from "./DeliveryAddressSheet";
 import GuestPageHeader from "./GuestPageHeader";
 import PaymentMethodSheet from "./PaymentMethodSheet";
 import PrimaryButton from "./PrimaryButton";
@@ -17,18 +18,34 @@ const CheckoutView = () => {
     items,
     subtotal,
     fulfillmentMethod,
+    deliveryAddress,
     notes,
     selectedPaymentId,
     setFulfillmentMethod,
+    setDeliveryAddress,
     setNotes,
     setSelectedPaymentId,
     placeOrder,
   } = useCart();
   const [paymentSheetOpen, setPaymentSheetOpen] = useState(false);
+  const [addressSheetOpen, setAddressSheetOpen] = useState(false);
+  const [draftAddress, setDraftAddress] = useState(deliveryAddress);
 
   const selectedPayment = guestPaymentMethods.find(
     (method) => method.id === selectedPaymentId
   );
+
+  const isDelivery = fulfillmentMethod === "delivery";
+  const canPay =
+    items.length > 0 && (!isDelivery || deliveryAddress.trim().length > 0);
+
+  const handleMethodChange = (method: "pickup" | "delivery") => {
+    setFulfillmentMethod(method);
+    if (method === "delivery") {
+      setDraftAddress(deliveryAddress);
+      setAddressSheetOpen(true);
+    }
+  };
 
   const handlePayNow = () => {
     const order = placeOrder(selectedPayment?.label ?? "Card");
@@ -50,7 +67,7 @@ const CheckoutView = () => {
             <button
               key={method}
               type="button"
-              onClick={() => setFulfillmentMethod(method)}
+              onClick={() => handleMethodChange(method)}
               className={`rounded-full px-4 py-2.5 text-sm font-semibold capitalize ${
                 fulfillmentMethod === method
                   ? "bg-gradient-to-r from-[#041B40] to-[#0A46A6] text-white"
@@ -61,6 +78,26 @@ const CheckoutView = () => {
             </button>
           ))}
         </div>
+
+        {isDelivery && (
+          <button
+            type="button"
+            onClick={() => {
+              setDraftAddress(deliveryAddress);
+              setAddressSheetOpen(true);
+            }}
+            className="mt-6 w-full rounded-2xl border border-gray-200 px-4 py-3 text-left"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-[#0A46A6]" />
+                <span className="text-sm font-semibold text-[#111827]">Delivery Address</span>
+              </div>
+              <Pencil className="h-4 w-4 text-[#0A46A6]" />
+            </div>
+            <p className="mt-2 text-sm text-[#64748B]">{deliveryAddress}</p>
+          </button>
+        )}
 
         <div className="mt-6 rounded-2xl border border-gray-200 px-4 py-3">
           <div className="flex items-center justify-between">
@@ -125,7 +162,7 @@ const CheckoutView = () => {
 
       <div className="fixed inset-x-0 bottom-0 z-20 bg-white px-4 py-4">
         <div className="mx-auto w-full max-w-md">
-          <PrimaryButton onClick={handlePayNow} disabled={items.length === 0}>
+          <PrimaryButton onClick={handlePayNow} disabled={!canPay}>
             Pay Now
           </PrimaryButton>
         </div>
@@ -141,6 +178,17 @@ const CheckoutView = () => {
           setPaymentSheetOpen(false);
         }}
         onAddNew={() => router.push("/order/checkout/add-card")}
+      />
+
+      <DeliveryAddressSheet
+        open={addressSheetOpen}
+        address={draftAddress}
+        onClose={() => setAddressSheetOpen(false)}
+        onChange={setDraftAddress}
+        onSave={() => {
+          setDeliveryAddress(draftAddress.trim());
+          setAddressSheetOpen(false);
+        }}
       />
     </div>
   );

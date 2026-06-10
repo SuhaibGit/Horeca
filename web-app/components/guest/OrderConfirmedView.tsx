@@ -39,6 +39,9 @@ const OrderConfirmedView = () => {
         </div>
         <InfoRow label="Order ID" value={lastOrder.id} />
         <InfoRow label="Date" value={lastOrder.dateLabel} />
+        {lastOrder.fulfillmentMethod === "delivery" && lastOrder.deliveryAddress && (
+          <InfoRow label="Delivery Address" value={lastOrder.deliveryAddress} />
+        )}
       </section>
 
       <section className="mt-4 rounded-2xl border border-gray-100 p-4">

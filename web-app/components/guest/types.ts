@@ -51,6 +51,7 @@ export interface PaymentMethod {
 export interface PlacedOrder {
   id: string;
   fulfillmentMethod: FulfillmentMethod;
+  deliveryAddress?: string;
   dateLabel: string;
   paymentLabel: string;
   notes: string;
