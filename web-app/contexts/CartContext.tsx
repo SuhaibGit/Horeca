@@ -9,6 +9,7 @@ import React, {
   useState,
 } from "react";
 import type { CartLineItem, FulfillmentMethod, PlacedOrder } from "@/components/guest/types";
+import { defaultDeliveryAddress } from "@/data/guestOrderData";
 import { getCartSubtotal } from "@/lib/cart";
 
 const CART_STORAGE_KEY = "horeca-guest-cart";
@@ -16,6 +17,7 @@ const CART_STORAGE_KEY = "horeca-guest-cart";
 interface StoredCartState {
   items: CartLineItem[];
   fulfillmentMethod: FulfillmentMethod;
+  deliveryAddress: string;
   notes: string;
   selectedPaymentId: string | null;
   lastOrder: PlacedOrder | null;
@@ -46,6 +48,7 @@ interface CartContextValue {
   itemCount: number;
   subtotal: number;
   fulfillmentMethod: FulfillmentMethod;
+  deliveryAddress: string;
   notes: string;
   selectedPaymentId: string | null;
   lastOrder: PlacedOrder | null;
@@ -53,6 +56,7 @@ interface CartContextValue {
   updateQuantity: (lineId: string, quantity: number) => void;
   removeItem: (lineId: string) => void;
   setFulfillmentMethod: (method: FulfillmentMethod) => void;
+  setDeliveryAddress: (address: string) => void;
   setNotes: (notes: string) => void;
   setSelectedPaymentId: (paymentId: string | null) => void;
   placeOrder: (paymentLabel: string) => PlacedOrder;
@@ -64,6 +68,7 @@ const CartContext = createContext<CartContextValue | null>(null);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartLineItem[]>([]);
   const [fulfillmentMethod, setFulfillmentMethod] = useState<FulfillmentMethod>("pickup");
+  const [deliveryAddress, setDeliveryAddress] = useState(defaultDeliveryAddress);
   const [notes, setNotes] = useState("");
   const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>("pm-1");
   const [lastOrder, setLastOrder] = useState<PlacedOrder | null>(null);
@@ -74,6 +79,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (stored) {
       setItems(stored.items);
       setFulfillmentMethod(stored.fulfillmentMethod);
+      setDeliveryAddress(stored.deliveryAddress ?? defaultDeliveryAddress);
       setNotes(stored.notes);
       setSelectedPaymentId(stored.selectedPaymentId);
       setLastOrder(stored.lastOrder);
@@ -86,12 +92,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const payload: StoredCartState = {
       items,
       fulfillmentMethod,
+      deliveryAddress,
       notes,
       selectedPaymentId,
       lastOrder,
     };
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(payload));
-  }, [fulfillmentMethod, hydrated, items, lastOrder, notes, selectedPaymentId]);
+  }, [deliveryAddress, fulfillmentMethod, hydrated, items, lastOrder, notes, selectedPaymentId]);
 
   const addItem = useCallback((input: AddToCartInput) => {
     setItems((prev) => [
@@ -131,6 +138,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const order: PlacedOrder = {
         id: `ORD#${Math.floor(100 + Math.random() * 900)}`,
         fulfillmentMethod,
+        deliveryAddress:
+          fulfillmentMethod === "delivery" ? deliveryAddress.trim() : undefined,
         dateLabel: new Date().toLocaleString("en-US", {
           month: "short",
           day: "numeric",
@@ -147,7 +156,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       clearCart();
       return order;
     },
-    [clearCart, fulfillmentMethod, items, notes]
+    [clearCart, deliveryAddress, fulfillmentMethod, items, notes]
   );
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -159,6 +168,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       itemCount,
       subtotal,
       fulfillmentMethod,
+      deliveryAddress,
       notes,
       selectedPaymentId,
       lastOrder,
@@ -166,6 +176,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       updateQuantity,
       removeItem,
       setFulfillmentMethod,
+      setDeliveryAddress,
       setNotes,
       setSelectedPaymentId,
       placeOrder,
@@ -174,6 +185,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     [
       addItem,
       clearCart,
+      deliveryAddress,
       fulfillmentMethod,
       itemCount,
       items,

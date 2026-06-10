@@ -134,6 +134,9 @@ export const guestModifierGroups: GuestModifierGroups = {
   ],
 };
 
+/** Replace with saved delivery address from your API. */
+export const defaultDeliveryAddress = "123 St. Downtown Rd. New jersey, 30015";
+
 export const guestPaymentMethods: PaymentMethod[] = [
   {
     id: "pm-1",

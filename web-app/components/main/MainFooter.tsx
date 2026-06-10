@@ -70,9 +70,7 @@ const MainFooter = ({ data }: MainFooterProps) => {
         {data.socialLinks.map((link) => (
           <a
             key={link.platform}
-            href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/follow-us"
             aria-label={link.platform}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:bg-white/10"
           >

@@ -1,3 +1,4 @@
+import { staticAssetUrl } from "@/lib/staticAsset";
 import { MainPageData } from "./types";
 
 /** Replace this object with your API response mapped to `MainPageData`. */
@@ -26,19 +27,19 @@ export const mainPageData: MainPageData = {
   promotions: [
     {
       id: "p1",
-      imageUrl: "/heroProm.png",
+      imageUrl: staticAssetUrl("/heroProm.png"),
       alt: "Up to 25% OFF with Zomato Pro",
       href: "#",
     },
     {
       id: "p2",
-      imageUrl: "/heroProm.png",
+      imageUrl: staticAssetUrl("/heroProm.png"),
       alt: "Weekend Brunch Special",
       href: "#",
     },
     {
       id: "p3",
-      imageUrl: "/heroProm.png",
+      imageUrl: staticAssetUrl("/heroProm.png"),
       alt: "Happy Hour Offer",
       href: "#",
     },
