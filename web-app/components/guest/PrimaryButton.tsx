@@ -15,7 +15,7 @@ const PrimaryButton = ({
   disabled,
   className = "",
 }: PrimaryButtonProps) => {
-  const styles = `flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#041B40] to-[#0A46A6] px-6 py-3.5 text-sm font-semibold text-white transition-opacity disabled:opacity-50 ${className}`;
+  const styles = `inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#041B40] to-[#0A46A6] px-6 py-3.5 text-sm font-semibold text-white transition-opacity disabled:opacity-50 ${className}`;
 
   if (href && !disabled) {
     return (
