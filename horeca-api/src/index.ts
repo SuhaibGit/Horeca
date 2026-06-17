@@ -1,15 +1,15 @@
 import express from "express";
 import dotenv from "dotenv";
 
+import appSetup from "./startup/init";
+import routerSetup from "./startup/router";
+import securitySetup from "./startup/security";
+import "./config/dbConnection";
+
 dotenv.config();
 
 const app = express();
-const PORT = Number(process.env.PORT) || 3001;
 
-app.get("/", (_req, res) => {
-    res.send("Horeca API is running");
-});
-
-app.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
-});
+securitySetup(app, express);
+routerSetup(app);
+appSetup(app);
