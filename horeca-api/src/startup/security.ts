@@ -1,15 +1,16 @@
-import express from "express";
-import dotenv from "dotenv";
+import cors from "cors";
+import { Express } from "express";
 
-import appSetup from "./startup/init";
-import routerSetup from "./startup/router";
-import securitySetup from "./startup/security";
-import "./config/dbConnection";
+const corsOpts = {
+    origin: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Accept", "Authorization"],
+    credentials: true,
+};
 
-dotenv.config();
+const securitySetup = (app: Express, express: typeof import("express")) => {
+    app.use(cors(corsOpts));
+    app.use(express.json());
+};
 
-const app = express();
-
-securitySetup(app, express);
-routerSetup(app);
-appSetup(app);
+export default securitySetup;
