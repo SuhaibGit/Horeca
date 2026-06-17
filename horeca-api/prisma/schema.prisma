@@ -1,0 +1,42 @@
+// Horeca API — auth tables only (sign-up / sign-in)
+
+datasource db {
+  provider = "mysql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  user_id         Int      @id @default(autoincrement()) @map("user_id")
+  email           String   @unique @db.VarChar(255)
+  mobile          String?  @unique @db.VarChar(40)
+  full_name       String   @map("full_name") @db.VarChar(255)
+  password_hash   String?  @map("password_hash") @db.VarChar(255)
+  locale          String   @default("en") @db.VarChar(8)
+  is_active       Boolean  @default(false) @map("is_active")
+  is_disabled     String   @default("NO") @map("is_disabled") @db.VarChar(3)
+  disabled_reason String?  @map("disabled_reason") @db.Text
+  created_at      DateTime @default(now()) @map("created_at")
+  updated_at      DateTime @updatedAt @map("updated_at")
+
+  otp_records UserOtp[]
+
+  @@map("user")
+}
+
+model UserOtp {
+  id          Int      @id @default(autoincrement())
+  user_id     Int      @map("user_id")
+  otp         String   @db.VarChar(16)
+  guid        String   @unique @db.VarChar(36)
+  is_verified Boolean  @default(false) @map("is_verified")
+  expires_at  DateTime @map("expires_at")
+  created_at  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([user_id, expires_at])
+  @@map("user_otp")
+}
