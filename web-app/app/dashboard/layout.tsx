@@ -5,9 +5,7 @@ import Sidebar from "../../components/layout/Sidebar";
 import DashboardHeaderWithFloors from "../../components/layout/DashboardHeaderWithFloors";
 import { Branch } from "../../components/layout/DashboardHeader";
 import { FloorPlanProvider } from "../../contexts/FloorPlanContext";
-const router = useRouter();
-const token = localStorage.getItem("accessToken");
-if (!token) router.push("/sign-in");
+
 const BRANCHES: Branch[] = [
   { id: "1", name: "The Grand Restaurant", location: "Downtown Location" },
   { id: "2", name: "Horeca Lounge", location: "Marina Branch" },
@@ -25,14 +23,17 @@ const BranchContext = createContext<{
 export const useBranch = () => useContext(BranchContext);
 
 export default function DashboardLayout({
+
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const token = localStorage.getItem("accessToken");
+  if (!token) router.push("/sign-in");
   const [activeBranchId, setActiveBranchId] = useState<string>("1");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
 
   // Extract active ID from current route pathname
   const pathParts = pathname.split("/");
