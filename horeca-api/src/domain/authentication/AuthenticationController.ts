@@ -32,6 +32,40 @@ class AuthenticationController {
         const result = await service.createPassword(req.body);
         return res.status(result.success ? 200 : 400).json(result);
     };
+    me = async (req: Request, res: Response) => {
+        try {
+            const authReq = req as import("../../config/middlewares").AuthRequest;
+            const userId = authReq.user?.user_id;
+
+            if (!userId) {
+                return res.status(401).json({ success: false, message: "Unauthorized" });
+            }
+
+            const service = new AuthenticationService();
+            const result = await service.getMe(userId);
+            return res.status(result.success ? 200 : 404).json(result);
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : "Server error";
+            return res.status(500).json({ success: false, message });
+        }
+    };
+    getMe = async (req: Request, res: Response) => {
+        try {
+            const authReq = req as import("../../config/middlewares").AuthRequest;
+            const userId = authReq.user?.user_id;
+
+            if (!userId) {
+                return res.status(401).json({ success: false, message: "Unauthorized" });
+            }
+
+            const service = new AuthenticationService();
+            const result = await service.getMe(userId);
+            return res.status(result.success ? 200 : 404).json(result);
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : "Server error";
+            return res.status(500).json({ success: false, message });
+        }
+    };
 }
 
 export default AuthenticationController;

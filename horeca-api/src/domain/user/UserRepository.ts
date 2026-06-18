@@ -29,6 +29,11 @@ class UserRepository {
             data,
         });
     }
+    async findById(userId: number) {
+        return prisma.user.findUnique({
+            where: { user_id: userId },
+        });
+    }
 }
 
 export default UserRepository;
