@@ -14,6 +14,9 @@ class UserService {
     update(userId: number, data: Record<string, unknown>) {
         return this.repo.update(userId, data);
     }
+    findById(userId: number) {
+        return this.repo.findById(userId);
+    }
 }
 
 export default UserService;

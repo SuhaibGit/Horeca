@@ -101,6 +101,23 @@ class AuthenticationService {
         });
         return { success: true, message: "Password created" };
     }
+    async getMe(userId: number) {
+        const user = await this.userService.findById(userId);
+
+        if (!user) {
+            return { success: false, message: "User not found" };
+        }
+
+        return {
+            success: true,
+            user: {
+                user_id: user.user_id,
+                email: user.email,
+                full_name: user.full_name,
+            },
+        };
+    }
+
 }
 
 export default AuthenticationService;

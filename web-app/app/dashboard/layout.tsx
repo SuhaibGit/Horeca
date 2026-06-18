@@ -1,12 +1,13 @@
 "use client";
-
 import React, { createContext, useContext, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Sidebar from "../../components/layout/Sidebar";
 import DashboardHeaderWithFloors from "../../components/layout/DashboardHeaderWithFloors";
 import { Branch } from "../../components/layout/DashboardHeader";
 import { FloorPlanProvider } from "../../contexts/FloorPlanContext";
-
+const router = useRouter();
+const token = localStorage.getItem("accessToken");
+if (!token) router.push("/sign-in");
 const BRANCHES: Branch[] = [
   { id: "1", name: "The Grand Restaurant", location: "Downtown Location" },
   { id: "2", name: "Horeca Lounge", location: "Marina Branch" },
@@ -75,59 +76,59 @@ export default function DashboardLayout({
   const dashboardShell = (
     <div className="flex h-full min-h-0 w-full bg-zinc-50 dark:bg-zinc-950 font-sans transition-colors duration-300 overflow-hidden">
 
-          {/* 1. SIDEBAR (DESKTOP) */}
-          <Sidebar
-            activeId={activeTab}
-            onItemSelect={handleSidebarSelect}
-            className="hidden lg:flex"
+      {/* 1. SIDEBAR (DESKTOP) */}
+      <Sidebar
+        activeId={activeTab}
+        onItemSelect={handleSidebarSelect}
+        className="hidden lg:flex"
+      />
+
+      {/* 2. SIDEBAR DRAWER (MOBILE) */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 flex lg:hidden">
+          {/* Backdrop overlay */}
+          <div
+            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 bg-[#092219]/60 backdrop-blur-xs transition-opacity duration-300"
           />
 
-          {/* 2. SIDEBAR DRAWER (MOBILE) */}
-          {mobileMenuOpen && (
-            <div className="fixed inset-0 z-50 flex lg:hidden">
-              {/* Backdrop overlay */}
-              <div
-                onClick={() => setMobileMenuOpen(false)}
-                className="fixed inset-0 bg-[#092219]/60 backdrop-blur-xs transition-opacity duration-300"
-              />
-
-              {/* Drawer content panel */}
-              <div className="relative flex flex-col w-64 h-full bg-[#092219] shadow-xl animate-slide-in">
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="absolute top-4 right-4 text-zinc-400 hover:text-white cursor-pointer"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-                <Sidebar activeId={activeTab} onItemSelect={handleSidebarSelect} className="h-full border-none" />
-              </div>
-            </div>
-          )}
-
-          {/* 3. MAIN DASHBOARD CONTENT */}
-          <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
-
-            {/* TOP BAR HEADER */}
-            <DashboardHeaderWithFloors
-              title={getPageTitle(activeTab)}
-              branches={BRANCHES}
-              activeBranchId={activeBranchId}
-              onBranchSelect={setActiveBranchId}
-              dateString="Date Selection"
-              onMobileMenuToggle={() => setMobileMenuOpen(true)}
-            />
-
-            {/* SCROLLABLE MAIN VIEW */}
-            <main className={isOnePagerRoute
-              ? "flex-1 min-h-0 overflow-hidden flex flex-col"
-              : "flex-1 min-h-0 overflow-y-auto overflow-x-hidden space-y-6 dashboard-scroll-container p-6"
-            }>
-              {children}
-            </main>
+          {/* Drawer content panel */}
+          <div className="relative flex flex-col w-64 h-full bg-[#092219] shadow-xl animate-slide-in">
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="absolute top-4 right-4 text-zinc-400 hover:text-white cursor-pointer"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <Sidebar activeId={activeTab} onItemSelect={handleSidebarSelect} className="h-full border-none" />
           </div>
         </div>
+      )}
+
+      {/* 3. MAIN DASHBOARD CONTENT */}
+      <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
+
+        {/* TOP BAR HEADER */}
+        <DashboardHeaderWithFloors
+          title={getPageTitle(activeTab)}
+          branches={BRANCHES}
+          activeBranchId={activeBranchId}
+          onBranchSelect={setActiveBranchId}
+          dateString="Date Selection"
+          onMobileMenuToggle={() => setMobileMenuOpen(true)}
+        />
+
+        {/* SCROLLABLE MAIN VIEW */}
+        <main className={isOnePagerRoute
+          ? "flex-1 min-h-0 overflow-hidden flex flex-col"
+          : "flex-1 min-h-0 overflow-y-auto overflow-x-hidden space-y-6 dashboard-scroll-container p-6"
+        }>
+          {children}
+        </main>
+      </div>
+    </div>
   );
 
   if (isBuilderMode) {
