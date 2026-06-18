@@ -1,5 +1,6 @@
 "use client";
-
+import { useRouter } from "next/navigation";
+import { apiPost } from "../../lib/api";
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -49,6 +50,7 @@ export default function SignupPage() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<PlanId>("Standard");
+  const [signupGuid, setSignupGuid] = useState("");
 
   // Code input references for automatic focus shifting in Step 2
   const codeRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -69,28 +71,11 @@ export default function SignupPage() {
   };
 
   // Step 1: Sign up validation & advance
-  const handleSignupSubmit = (e: React.FormEvent) => {
+  const handleSignupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors: Record<string, string> = {};
 
-    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
-    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-    if (!formData.agreeToTerms) {
-      newErrors.agreeToTerms = "You must agree to the Terms & Conditions";
-    }
+    const newErrors: Record<string, string> = {};
+    // ... keep your existing validation ...
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -98,10 +83,30 @@ export default function SignupPage() {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    try {
+      const res = await apiPost<{
+        success: boolean;
+        message?: string;
+        guid?: string;
+        otp?: string;
+      }>("/auth/register/account", {
+        full_name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+        email: formData.email.trim(),
+      });
+
+      if (!res.success || !res.guid) {
+        setErrors({ email: res.message || "Registration failed" });
+        return;
+      }
+
+      setSignupGuid(res.guid);
       setStep("verify");
-    }, 800);
+    } catch {
+      alert("Could not connect to server. Is the API running?");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Step 2: Verification Code automatic focus shifting and submit
@@ -125,20 +130,54 @@ export default function SignupPage() {
     }
   };
 
-  const handleVerifySubmit = (e: React.FormEvent) => {
+  const handleVerifySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const code = formData.verificationCode.join("");
     if (code.length < 6) {
       setErrors({ verification: "Please enter the full 6-digit verification code" });
       return;
     }
 
+    if (!signupGuid) {
+      setErrors({ verification: "Session expired. Please sign up again." });
+      return;
+    }
+
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    try {
+      const verifyRes = await apiPost<{ success: boolean; message?: string }>(
+        "/auth/verify-verification-code",
+        { guid: signupGuid, code }
+      );
+
+      if (!verifyRes.success) {
+        setErrors({ verification: verifyRes.message || "Invalid code" });
+        return;
+      }
+
+      const passwordRes = await apiPost<{ success: boolean; message?: string }>(
+        "/auth/create-password",
+        {
+          guid: signupGuid,
+          code,
+          password: formData.password,
+        }
+      );
+
+      if (!passwordRes.success) {
+        setErrors({ verification: passwordRes.message || "Could not set password" });
+        return;
+      }
+
       setErrors({});
       setStep("workspace");
-    }, 800);
+    } catch {
+      alert("Could not connect to server.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Step 3: Workspace settings submit

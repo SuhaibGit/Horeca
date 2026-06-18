@@ -1,5 +1,6 @@
 "use client";
-
+import { useRouter } from "next/navigation";
+import { apiPost } from "../../lib/api";
 import React, { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,6 +11,9 @@ import Button from "../../components/Button";
 type SignInStep = "signin" | "forgot" | "verify" | "reset";
 
 export default function SignInPage() {
+
+  const router = useRouter();
+
   const [step, setStep] = useState<SignInStep>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,9 +28,29 @@ export default function SignInPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
 
-  const handleSignInSubmit = (e: React.FormEvent) => {
+  const handleSignInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Signing in successfully!");
+
+    try {
+      const res = await apiPost<{
+        success: boolean;
+        message?: string;
+        accessToken?: string;
+      }>("/auth/authenticate/credential", {
+        username: email,
+        password,
+      });
+
+      if (!res.success || !res.accessToken) {
+        alert(res.message || "Login failed");
+        return;
+      }
+
+      localStorage.setItem("accessToken", res.accessToken);
+      router.push("/dashboard");
+    } catch {
+      alert("Could not connect to server. Is the API running?");
+    }
   };
 
   const handleForgotSubmit = (e: React.FormEvent) => {
