@@ -117,6 +117,27 @@ class AuthenticationService {
             },
         };
     }
+    async changePassword(
+        userId: number,
+        currentPassword: string,
+        newPassword: string
+    ) {
+        const user = await this.userService.findById(userId);
+
+        if (!user || !user.password_hash) {
+            return { success: false, message: "User not found" };
+        }
+
+        const match = await compareAsync(currentPassword, user.password_hash);
+        if (!match) {
+            return { success: false, message: "Current password is incorrect" };
+        }
+
+        const hash = encryptSync(newPassword);
+        await this.userService.update(userId, { password_hash: hash });
+
+        return { success: true, message: "Password updated successfully" };
+    }
 
 }
 
