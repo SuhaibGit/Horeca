@@ -66,6 +66,29 @@ class AuthenticationController {
             return res.status(500).json({ success: false, message });
         }
     };
+    changePassword = async (req: Request, res: Response) => {
+        try {
+            const authReq = req as import("../../config/middlewares").AuthRequest;
+            const userId = authReq.user?.user_id;
+
+            if (!userId) {
+                return res.status(401).json({ success: false, message: "Unauthorized" });
+            }
+
+            const { current_password, new_password } = req.body;
+            const service = new AuthenticationService();
+            const result = await service.changePassword(
+                userId,
+                current_password,
+                new_password
+            );
+
+            return res.status(result.success ? 200 : 400).json(result);
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : "Server error";
+            return res.status(500).json({ success: false, message });
+        }
+    };
 }
 
 export default AuthenticationController;
