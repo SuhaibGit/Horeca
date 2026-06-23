@@ -1,5 +1,7 @@
 import { Express, Request, Response, Router } from "express";
 import AuthenticationRoutes from "../domain/authentication/AuthenticationRoutes";
+import { verifyJWT_MW } from "../config/middlewares";
+import UserRoutes from "../domain/user/UserRoutes";
 
 const publicRouter = Router();
 publicRouter
@@ -9,7 +11,9 @@ publicRouter
     .use("/auth", AuthenticationRoutes);
 
 const protectedRouter = Router();
-// later: protectedRouter.use(verifyJWT_MW)
+protectedRouter
+    .use(verifyJWT_MW)      // every route below needs a token
+    .use("/users", UserRoutes);
 
 const routerSetup = (app: Express) => {
     app.use(publicRouter);

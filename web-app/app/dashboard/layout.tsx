@@ -1,10 +1,11 @@
 "use client";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Sidebar from "../../components/layout/Sidebar";
 import DashboardHeaderWithFloors from "../../components/layout/DashboardHeaderWithFloors";
-import { Branch } from "../../components/layout/DashboardHeader";
+import { Branch, UserProfile } from "../../components/layout/DashboardHeader";
 import { FloorPlanProvider } from "../../contexts/FloorPlanContext";
+import { apiGet, getAccessToken } from "../../lib/api";
 
 const BRANCHES: Branch[] = [
   { id: "1", name: "The Grand Restaurant", location: "Downtown Location" },
@@ -23,17 +24,47 @@ const BranchContext = createContext<{
 export const useBranch = () => useContext(BranchContext);
 
 export default function DashboardLayout({
-
   children,
 }: {
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const token = localStorage.getItem("accessToken");
-  if (!token) router.push("/sign-in");
+  const pathname = usePathname();
+
   const [activeBranchId, setActiveBranchId] = useState<string>("1");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const pathname = usePathname();
+  const [headerUser, setHeaderUser] = useState<UserProfile>({
+    name: "User",
+    avatarUrl: "/avatars/avatar.jpg",
+  });
+
+  useEffect(() => {
+    const token = getAccessToken();
+    if (!token) {
+      router.push("/sign-in");
+      return;
+    }
+
+    async function loadUser() {
+      try {
+        const res = await apiGet<{
+          success: boolean;
+          user?: { full_name: string; email: string };
+        }>("/auth/me", token);
+
+        if (res.success && res.user?.full_name) {
+          setHeaderUser({
+            name: res.user.full_name,
+            avatarUrl: "/avatars/avatar.jpg",
+          });
+        }
+      } catch {
+        // Keep fallback name if profile fetch fails
+      }
+    }
+
+    loadUser();
+  }, [router, pathname]);
 
   // Extract active ID from current route pathname
   const pathParts = pathname.split("/");
@@ -117,6 +148,7 @@ export default function DashboardLayout({
           branches={BRANCHES}
           activeBranchId={activeBranchId}
           onBranchSelect={setActiveBranchId}
+          user={headerUser}
           dateString="Date Selection"
           onMobileMenuToggle={() => setMobileMenuOpen(true)}
         />

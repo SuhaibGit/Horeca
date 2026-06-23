@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { apiGet, apiPatch, apiPost, getAccessToken } from "@/lib/api";
 import {
   Building2,
   Camera,
@@ -18,6 +19,7 @@ import Input from "@/components/Input";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import Toast from "@/components/Toast";
 
+
 type SettingsTab = "profile" | "password" | "business" | "payment";
 
 const VENUE_CATEGORIES = [
@@ -29,6 +31,14 @@ const VENUE_CATEGORIES = [
   "Bar",
   "Night Club",
 ];
+function splitName(fullName: string): { firstName: string; lastName: string } {
+  const parts = fullName.trim().split(/\s+/);
+  if (parts.length === 1) return { firstName: parts[0], lastName: "" };
+  return {
+    firstName: parts[0],
+    lastName: parts.slice(1).join(" "),
+  };
+}
 
 const TAB_ITEMS: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
   { id: "profile", label: "Profile", icon: <User className="h-4 w-4" /> },
@@ -98,8 +108,10 @@ function SectionHeader({
   isEditing: boolean;
   onEdit: () => void;
   onCancel: () => void;
-  onSave: () => void;
+  onSave: () => void | Promise<void>;
 }) {
+
+
   return (
     <div className="flex flex-wrap items-start justify-between gap-3 border-b border-zinc-100 pb-5">
       <div>
@@ -176,7 +188,6 @@ export default function SettingsPage() {
   const [profile, setProfile] = useState<ProfileForm>(initialProfile);
   const [profileDraft, setProfileDraft] = useState<ProfileForm>(initialProfile);
 
-  const [savedPassword, setSavedPassword] = useState("Horeca@2026");
   const [showSavedPassword, setShowSavedPassword] = useState(false);
   const [passwordForm, setPasswordForm] = useState<PasswordForm>({
     current: "",
@@ -196,7 +207,31 @@ export default function SettingsPage() {
     setToastMessage(message);
     setShowToast(true);
   };
+  useEffect(() => {
+    async function loadProfile() {
+      const token = getAccessToken();
+      if (!token) return;
 
+      const res = await apiGet<{
+        success: boolean;
+        user?: { full_name: string; email: string };
+      }>("/auth/me", token);
+
+      if (res.success && res.user) {
+        const { firstName, lastName } = splitName(res.user.full_name);
+        const loaded: ProfileForm = {
+          firstName,
+          lastName,
+          email: res.user.email,
+          avatarUrl: initialProfile.avatarUrl,
+        };
+        setProfile(loaded);
+        setProfileDraft(loaded);
+      }
+    }
+
+    loadProfile();
+  }, []);
   const startEdit = () => {
     if (activeTab === "profile") setProfileDraft(profile);
     if (activeTab === "business") setBusinessDraft(business);
@@ -214,14 +249,10 @@ export default function SettingsPage() {
     setShowSavedPassword(false);
   };
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (activeTab === "password") {
       if (!passwordForm.current || !passwordForm.next || !passwordForm.confirm) {
         showToastMessage("Please fill in all password fields.");
-        return;
-      }
-      if (passwordForm.current !== savedPassword) {
-        showToastMessage("Current password is incorrect.");
         return;
       }
       if (passwordForm.next !== passwordForm.confirm) {
@@ -232,14 +263,70 @@ export default function SettingsPage() {
         showToastMessage("Password must be at least 8 characters.");
         return;
       }
-      setSavedPassword(passwordForm.next);
-      setPasswordForm({ current: "", next: "", confirm: "" });
-      setShowSavedPassword(false);
-      showToastMessage("Password updated successfully.");
-    } else if (activeTab === "profile") {
-      setProfile(profileDraft);
-      showToastMessage("Profile updated successfully.");
-    } else if (activeTab === "business") {
+
+      try {
+        const res = await apiPost<{ success: boolean; message?: string }>(
+          "/auth/change-password",
+          {
+            current_password: passwordForm.current,
+            new_password: passwordForm.next,
+          },
+          true
+        );
+
+        if (!res.success) {
+          showToastMessage(res.message || "Could not update password.");
+          return;
+        }
+
+        setPasswordForm({ current: "", next: "", confirm: "" });
+        setShowSavedPassword(false);
+        setEditingTab(null);
+        showToastMessage("Password updated successfully.");
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : "Could not connect to server.";
+        showToastMessage(message);
+      }
+      return;
+    }
+
+    if (activeTab === "profile") {
+      const token = getAccessToken();
+      if (!token) {
+        showToastMessage("Please sign in again.");
+        return;
+      }
+
+      const full_name =
+        `${profileDraft.firstName.trim()} ${profileDraft.lastName.trim()}`.trim();
+
+      try {
+        const res = await apiPatch<{
+          success: boolean;
+          message?: string;
+        }>("/users/me", {
+          full_name,
+          email: profileDraft.email.trim(),
+        });
+
+        if (!res.success) {
+          showToastMessage(res.message || "Could not update profile.");
+          return;
+        }
+
+        setProfile(profileDraft);
+        setEditingTab(null);
+        showToastMessage("Profile updated successfully.");
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : "Could not connect to server.";
+        showToastMessage(message);
+      }
+      return;
+    }
+
+    if (activeTab === "business") {
       const hex = businessDraft.brandColor.trim();
       if (!/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(hex)) {
         showToastMessage("Enter a valid brand color (e.g. #343edf).");
@@ -495,8 +582,8 @@ export default function SettingsPage() {
                       <div className="flex items-center gap-3 rounded-xl border border-[#DCDFE4] bg-white px-4 py-3.5 shadow-2xs">
                         <span className="flex-1 text-[13px] font-medium tracking-wide text-zinc-800">
                           {showSavedPassword
-                            ? savedPassword
-                            : "•".repeat(Math.min(savedPassword.length, 12))}
+                            ? "Your password is set"
+                            : "••••••••••••"}
                         </span>
                         <button
                           type="button"
@@ -747,6 +834,7 @@ export default function SettingsPage() {
         onClose={() => setLogoutOpen(false)}
         onConfirm={() => {
           setLogoutOpen(false);
+          localStorage.removeItem("accessToken");
           router.push("/sign-in");
         }}
         title="Log out?"
