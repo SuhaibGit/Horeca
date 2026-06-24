@@ -1,5 +1,6 @@
 import cors from "cors";
 import { Express } from "express";
+import { uploadsDir } from "../domain/upload/uploadConfig";
 
 const corsOpts = {
     origin: true,
@@ -11,6 +12,7 @@ const corsOpts = {
 const securitySetup = (app: Express, express: typeof import("express")) => {
     app.use(cors(corsOpts));
     app.use(express.json());
+    app.use("/uploads", express.static(uploadsDir));
 };
 
 export default securitySetup;

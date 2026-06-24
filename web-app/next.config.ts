@@ -2,11 +2,17 @@ import type { NextConfig } from "next";
 import { ASSET_CACHE_VERSION } from "./lib/staticAsset";
 
 const nextConfig: NextConfig = {
-  images: {
+    images: {
     remotePatterns: [
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/uploads/**",
       },
     ],
     localPatterns: [
