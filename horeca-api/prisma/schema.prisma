@@ -23,6 +23,7 @@ model User {
   updated_at      DateTime @updatedAt @map("updated_at")
 
   otp_records UserOtp[]
+  venues      Venue[]
 
   @@map("user")
 }
@@ -40,4 +41,19 @@ model UserOtp {
 
   @@index([user_id, expires_at])
   @@map("user_otp")
+}
+model Venue {
+  venue_id      Int      @id @default(autoincrement()) @map("venue_id")
+  owner_user_id Int      @map("owner_user_id")
+  name          String   @db.VarChar(255)
+  category      String   @db.VarChar(64)
+  brand_color   String   @default("#0A46A6") @map("brand_color") @db.VarChar(16)
+  logo_url      String?  @map("logo_url") @db.VarChar(512)
+  created_at    DateTime @default(now()) @map("created_at")
+  updated_at    DateTime @updatedAt @map("updated_at")
+
+  owner User @relation(fields: [owner_user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([owner_user_id])
+  @@map("venue")
 }

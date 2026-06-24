@@ -10,10 +10,11 @@ export type AuthRequest = Request & {
     };
 };
 export async function verifyJWT_MW(
-    req: AuthRequest,
+    req: Request,
     res: Response,
     next: NextFunction
 ) {
+    const authReq = req as AuthRequest;
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -40,7 +41,7 @@ export async function verifyJWT_MW(
             });
         }
 
-        req.user = {
+        authReq.user = {
             user_id: user.user_id,
             email: user.email,
             full_name: user.full_name,
