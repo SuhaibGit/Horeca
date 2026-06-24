@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { apiGet, apiPatch, apiPost, getAccessToken } from "@/lib/api";
+import { apiGet, apiPatch, apiPost, apiUpload, getAccessToken, resolveMediaUrl } from "@/lib/api";
 import {
   Building2,
   Camera,
@@ -110,6 +110,7 @@ function SectionHeader({
   onCancel: () => void;
   onSave: () => void | Promise<void>;
 }) {
+  useEffect(() => { }, [])
 
 
   return (
@@ -197,6 +198,7 @@ export default function SettingsPage() {
 
   const [business, setBusiness] = useState<BusinessForm>(initialBusiness);
   const [businessDraft, setBusinessDraft] = useState<BusinessForm>(initialBusiness);
+  const [brandLogoFile, setBrandLogoFile] = useState<File | null>(null);
 
   const [payment, setPayment] = useState<PaymentForm>(initialPayment);
   const [paymentDraft, setPaymentDraft] = useState<PaymentForm>(initialPayment);
@@ -230,8 +232,37 @@ export default function SettingsPage() {
       }
     }
 
+    async function loadVenue() {
+      const token = getAccessToken();
+      if (!token) return;
+
+      const res = await apiGet<{
+        success: boolean;
+        venue?: {
+          name: string;
+          category: string;
+          brand_color: string;
+          logo_url: string | null;
+        };
+      }>("/venues/me", token);
+
+      if (res.success && res.venue) {
+        const loaded: BusinessForm = {
+          venueName: res.venue.name,
+          venueCategory: res.venue.category,
+          brandColor: res.venue.brand_color,
+          brandLogoUrl: res.venue.logo_url ?? "/Auth/TempLogo.png",
+        };
+        setBusiness(loaded);
+        setBusinessDraft(loaded);
+      }
+    }
+
     loadProfile();
+    loadVenue();
   }, []);
+
+
   const startEdit = () => {
     if (activeTab === "profile") setProfileDraft(profile);
     if (activeTab === "business") setBusinessDraft(business);
@@ -245,6 +276,7 @@ export default function SettingsPage() {
 
   const cancelEdit = () => {
     setEditingTab(null);
+    setBrandLogoFile(null);
     setPasswordForm({ current: "", next: "", confirm: "" });
     setShowSavedPassword(false);
   };
@@ -332,8 +364,63 @@ export default function SettingsPage() {
         showToastMessage("Enter a valid brand color (e.g. #343edf).");
         return;
       }
-      setBusiness({ ...businessDraft, brandColor: hex });
-      showToastMessage("Business details saved.");
+
+      try {
+        let logoUrl: string | undefined;
+
+        if (brandLogoFile) {
+          const uploadRes = await apiUpload<{
+            success: boolean;
+            url?: string;
+            message?: string;
+          }>("/uploads/logo", brandLogoFile);
+
+          if (!uploadRes.success || !uploadRes.url) {
+            showToastMessage(uploadRes.message || "Could not upload logo.");
+            return;
+          }
+
+          logoUrl = uploadRes.url;
+        }
+
+        const res = await apiPatch<{
+          success: boolean;
+          message?: string;
+          venue?: {
+            name: string;
+            category: string;
+            brand_color: string;
+            logo_url: string | null;
+          };
+        }>("/venues/me", {
+          name: businessDraft.venueName.trim(),
+          category: businessDraft.venueCategory,
+          brand_color: hex,
+          ...(logoUrl ? { logo_url: logoUrl } : {}),
+        });
+
+        if (!res.success) {
+          showToastMessage(res.message || "Could not save business details.");
+          return;
+        }
+
+        const savedBusiness: BusinessForm = {
+          venueName: businessDraft.venueName.trim(),
+          venueCategory: businessDraft.venueCategory,
+          brandColor: hex,
+          brandLogoUrl: logoUrl ?? businessDraft.brandLogoUrl,
+        };
+        setBusiness(savedBusiness);
+        setBusinessDraft(savedBusiness);
+        setBrandLogoFile(null);
+        setEditingTab(null);
+        showToastMessage("Business details saved.");
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : "Could not connect to server.";
+        showToastMessage(message);
+      }
+      return;
     } else if (activeTab === "payment") {
       setPayment(paymentDraft);
       showToastMessage("Payment settings saved.");
@@ -367,21 +454,21 @@ export default function SettingsPage() {
       showToastMessage("Logo must be under 5MB.");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      const url = reader.result as string;
-      setBusinessDraft((b) => ({ ...b, brandLogoUrl: url }));
-      if (editingTab !== "business") {
-        setBusiness((b) => ({ ...b, brandLogoUrl: url }));
-        showToastMessage("Brand logo updated.");
-      }
-    };
-    reader.readAsDataURL(file);
+    setBrandLogoFile(file);
+    setBusinessDraft((b) => ({
+      ...b,
+      brandLogoUrl: URL.createObjectURL(file),
+    }));
   };
 
   const displayProfile = isEditing && activeTab === "profile" ? profileDraft : profile;
   const displayBusiness = isEditing && activeTab === "business" ? businessDraft : business;
   const displayPayment = isEditing && activeTab === "payment" ? paymentDraft : payment;
+
+  const brandLogoSrc = resolveMediaUrl(displayBusiness.brandLogoUrl);
+  const brandLogoUnoptimized =
+    displayBusiness.brandLogoUrl.startsWith("data:") ||
+    displayBusiness.brandLogoUrl.startsWith("blob:");
 
   const sectionMeta: Record<
     SettingsTab,
@@ -627,11 +714,11 @@ export default function SettingsPage() {
                         >
                           <div className="relative h-16 w-40">
                             <Image
-                              src={displayBusiness.brandLogoUrl}
+                              src={brandLogoSrc}
                               alt="Brand logo"
                               fill
                               className="object-contain"
-                              unoptimized={displayBusiness.brandLogoUrl.startsWith("data:")}
+                              unoptimized={brandLogoUnoptimized}
                             />
                           </div>
                           <span className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-[#041B40] to-[#0A46A6] text-white shadow-md">
@@ -643,11 +730,11 @@ export default function SettingsPage() {
                       <div className="flex h-28 w-full max-w-sm items-center justify-center rounded-xl border border-[#DCDFE4] bg-[#f4f5f6] px-6">
                         <div className="relative h-16 w-40">
                           <Image
-                            src={displayBusiness.brandLogoUrl}
+                            src={brandLogoSrc}
                             alt="Brand logo"
                             fill
                             className="object-contain"
-                            unoptimized={displayBusiness.brandLogoUrl.startsWith("data:")}
+                            unoptimized={brandLogoUnoptimized}
                           />
                         </div>
                       </div>

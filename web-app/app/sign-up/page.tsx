@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { apiPost } from "../../lib/api";
+import { apiPost, apiUpload, getAccessToken } from "../../lib/api";
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -171,6 +171,23 @@ export default function SignupPage() {
         return;
       }
 
+      const loginRes = await apiPost<{
+        success: boolean;
+        accessToken?: string;
+        message?: string;
+      }>("/auth/authenticate/credential", {
+        username: formData.email.trim(),
+        password: formData.password,
+      });
+
+      if (!loginRes.success || !loginRes.accessToken) {
+        setErrors({
+          verification: loginRes.message || "Account created but sign-in failed.",
+        });
+        return;
+      }
+
+      localStorage.setItem("accessToken", loginRes.accessToken);
       setErrors({});
       setStep("workspace");
     } catch {
@@ -193,16 +210,68 @@ export default function SignupPage() {
 
   // Step 4: Visual Identity drag-and-drop & submit
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setLogoFile(file);
-      setLogoPreview(URL.createObjectURL(file));
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Logo must be under 5MB.");
+      return;
     }
+    setLogoFile(file);
+    setLogoPreview(URL.createObjectURL(file));
   };
 
-  const handleIdentitySubmit = (e: React.FormEvent) => {
+  const handleIdentitySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStep("plan");
+    setIsSubmitting(true);
+
+    try {
+      if (!getAccessToken()) {
+        alert("Session expired. Please sign in again.");
+        return;
+      }
+
+      let logoUrl: string | undefined;
+
+      if (logoFile) {
+        const uploadRes = await apiUpload<{
+          success: boolean;
+          url?: string;
+          message?: string;
+        }>("/uploads/logo", logoFile);
+
+        if (!uploadRes.success || !uploadRes.url) {
+          alert(uploadRes.message || "Could not upload logo.");
+          return;
+        }
+
+        logoUrl = uploadRes.url;
+      }
+
+      const venueRes = await apiPost<{
+        success: boolean;
+        message?: string;
+      }>(
+        "/venues",
+        {
+          name: formData.venueName.trim(),
+          category: formData.venueCategory,
+          brand_color: formData.brandColor,
+          ...(logoUrl ? { logo_url: logoUrl } : {}),
+        },
+        true
+      );
+
+      if (!venueRes.success) {
+        alert(venueRes.message || "Could not create venue.");
+        return;
+      }
+
+      setStep("plan");
+    } catch {
+      alert("Could not connect to server.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Step 6: Checkout payment submit
@@ -582,7 +651,7 @@ export default function SignupPage() {
                     </div>
                   </div>
 
-                  <Button type="submit">Continue</Button>
+                  <Button type="submit" isLoading={isSubmitting}>Continue</Button>
                 </form>
               )}
 

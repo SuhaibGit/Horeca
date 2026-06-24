@@ -184,7 +184,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`w-70 bg-[#031410] text-zinc-400 pt-5 pb-5 pl-5 pr-0 flex flex-col h-full min-h-0 overflow-hidden shrink-0 border-r border-[#123024] [color-scheme:dark] ${className}`}
+      className={`w-70 bg-[#030314] text-zinc-400 pt-5 pb-5 pl-5 pr-0 flex flex-col h-full min-h-0 overflow-hidden shrink-0 border-r border-[#123024] [color-scheme:dark] ${className}`}
     >
       <svg width="0" height="0" className="absolute pointer-events-none">
         <defs>
