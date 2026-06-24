@@ -49,6 +49,7 @@ model Venue {
   category      String   @db.VarChar(64)
   brand_color   String   @default("#0A46A6") @map("brand_color") @db.VarChar(16)
   logo_url      String?  @map("logo_url") @db.VarChar(512)
+  menu_items MenuItem[]
   created_at    DateTime @default(now()) @map("created_at")
   updated_at    DateTime @updatedAt @map("updated_at")
 
@@ -56,4 +57,25 @@ model Venue {
 
   @@index([owner_user_id])
   @@map("venue")
+}
+model MenuItem {
+  menu_item_id    Int      @id @default(autoincrement()) @map("menu_item_id")
+  venue_id        Int      @map("venue_id")
+  name            String   @db.VarChar(255)
+  description     String?  @db.Text
+  price           Decimal  @db.Decimal(10, 2)
+  category        String   @db.VarChar(64)
+  fulfillment_type String  @default("All Channels") @map("fulfillment_type") @db.VarChar(32)
+  serving_periods Json    @map("serving_periods")   // e.g. ["Lunch", "Dinner"]
+  image_url       String?  @map("image_url") @db.VarChar(512)
+  tags            Json     @default("[]")
+  allergens       Json     @default("[]")
+  is_available    Boolean  @default(true) @map("is_available")
+  created_at      DateTime @default(now()) @map("created_at")
+  updated_at      DateTime @updatedAt @map("updated_at")
+
+  venue Venue @relation(fields: [venue_id], references: [venue_id], onDelete: Cascade)
+
+  @@index([venue_id])
+  @@map("menu_item")
 }
