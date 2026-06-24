@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { apiPost } from "../../lib/api";
-import React, { useState, useRef } from "react";
+import { apiPost, getAccessToken, setAccessToken } from "../../lib/api";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Card from "../../components/Card";
@@ -27,6 +27,11 @@ export default function SignInPage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
+  useEffect(() => {
+    if (getAccessToken()) {
+      router.replace("/dashboard");
+    }
+  }, [router]);
 
   const handleSignInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +51,7 @@ export default function SignInPage() {
         return;
       }
 
-      localStorage.setItem("accessToken", res.accessToken);
+      setAccessToken(res.accessToken);
       router.push("/dashboard");
     } catch {
       alert("Could not connect to server. Is the API running?");

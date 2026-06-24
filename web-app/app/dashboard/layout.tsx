@@ -5,7 +5,7 @@ import Sidebar from "../../components/layout/Sidebar";
 import DashboardHeaderWithFloors from "../../components/layout/DashboardHeaderWithFloors";
 import { Branch, UserProfile } from "../../components/layout/DashboardHeader";
 import { FloorPlanProvider } from "../../contexts/FloorPlanContext";
-import { apiGet, getAccessToken } from "../../lib/api";
+import { apiGet, clearAccessToken, getAccessToken } from "../../lib/api";
 
 const BRANCHES: Branch[] = [
   { id: "1", name: "The Grand Restaurant", location: "Downtown Location" },
@@ -33,6 +33,7 @@ export default function DashboardLayout({
 
   const [activeBranchId, setActiveBranchId] = useState<string>("1");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const [headerUser, setHeaderUser] = useState<UserProfile>({
     name: "User",
     avatarUrl: "/avatars/avatar.jpg",
@@ -52,6 +53,11 @@ export default function DashboardLayout({
           user?: { full_name: string; email: string };
         }>("/auth/me", token);
 
+        if (!res.success) {
+          clearAccessToken();
+          router.push("/sign-in");
+          return;
+        }
         if (res.success && res.user?.full_name) {
           setHeaderUser({
             name: res.user.full_name,
@@ -60,6 +66,10 @@ export default function DashboardLayout({
         }
       } catch {
         // Keep fallback name if profile fetch fails
+      }
+      setAuthChecked(true);
+      if (!authChecked) {
+        return <div className="flex h-screen items-center justify-center">Loading...</div>;
       }
     }
 
