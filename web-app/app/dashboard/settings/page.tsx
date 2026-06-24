@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { apiGet, apiPatch, apiPost, apiUpload, getAccessToken, resolveMediaUrl } from "@/lib/api";
+import { apiGet, apiPatch, apiPost, apiUpload, getAccessToken, logout, resolveMediaUrl } from "@/lib/api";
 import {
   Building2,
   Camera,
@@ -921,7 +921,7 @@ export default function SettingsPage() {
         onClose={() => setLogoutOpen(false)}
         onConfirm={() => {
           setLogoutOpen(false);
-          localStorage.removeItem("accessToken");
+          logout();
           router.push("/sign-in");
         }}
         title="Log out?"

@@ -2,6 +2,10 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { LogOut, Settings } from "lucide-react";
+import { logout } from "../../lib/api";
 
 export interface Branch {
   id: string;
@@ -56,8 +60,10 @@ export default function DashboardHeader({
   onMobileMenuToggle,
   className = "",
 }: DashboardHeaderProps) {
+  const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [floorDropdownOpen, setFloorDropdownOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const activeBranch = branches.find((b) => b.id === activeBranchId) || branches[0];
   const showFloorDropdown = floors && floors.length > 1;
   const activeFloor =
@@ -68,6 +74,12 @@ export default function DashboardHeader({
       onBranchSelect(id);
     }
     setDropdownOpen(false);
+  };
+
+  const handleLogout = () => {
+    setUserMenuOpen(false);
+    logout();
+    router.replace("/sign-in");
   };
 
   return (
@@ -194,24 +206,58 @@ export default function DashboardHeader({
           </svg>
         </button>
 
-        {/* User Card Info Block */}
-        <div className="flex items-center gap-3 pl-4 border-l border-zinc-100 dark:border-zinc-800">
-          <div className="relative w-9 h-9 rounded-full overflow-hidden bg-[#0A46A6]/10 flex items-center justify-center border border-zinc-100 dark:border-zinc-800">
-            {/* Safe fallback for avatar image rendering */}
-            {user.avatarUrl && !user.avatarUrl.includes("avatar.jpg") ? (
-              <Image src={user.avatarUrl} alt={user.name} fill className="object-cover" />
-            ) : (
-              <span className="text-[11px] font-extrabold text-[#0A46A6] tracking-tight">
-                {user.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </span>
-            )}
-          </div>
-          <span className="text-[12.5px] font-bold text-zinc-800 dark:text-zinc-200 hidden sm:inline">
-            {user.name}
-          </span>
+        {/* User menu */}
+        <div className="relative pl-4 border-l border-zinc-100 dark:border-zinc-800">
+          <button
+            type="button"
+            onClick={() => setUserMenuOpen(!userMenuOpen)}
+            className="flex items-center gap-3 rounded-xl px-1 py-1 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition-colors cursor-pointer"
+          >
+            <div className="relative w-9 h-9 rounded-full overflow-hidden bg-[#0A46A6]/10 flex items-center justify-center border border-zinc-100 dark:border-zinc-800">
+              {user.avatarUrl && !user.avatarUrl.includes("avatar.jpg") ? (
+                <Image src={user.avatarUrl} alt={user.name} fill className="object-cover" />
+              ) : (
+                <span className="text-[11px] font-extrabold text-[#0A46A6] tracking-tight">
+                  {user.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </span>
+              )}
+            </div>
+            <span className="text-[12.5px] font-bold text-zinc-800 dark:text-zinc-200 hidden sm:inline">
+              {user.name}
+            </span>
+            <svg
+              className={`w-4 h-4 text-zinc-400 transition-transform duration-200 hidden sm:block ${userMenuOpen ? "rotate-180" : ""}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {userMenuOpen && (
+            <div className="absolute top-full right-0 mt-1.5 w-48 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-lg z-30 py-1.5 overflow-hidden animate-fade-in">
+              <Link
+                href="/dashboard/settings"
+                onClick={() => setUserMenuOpen(false)}
+                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-[12px] font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors"
+              >
+                <Settings className="h-4 w-4 text-zinc-500" />
+                Settings
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-[12px] font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
+              >
+                <LogOut className="h-4 w-4" />
+                Log out
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

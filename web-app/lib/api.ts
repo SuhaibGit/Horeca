@@ -119,3 +119,21 @@ export async function apiUpload<T = unknown>(path: string, file: File): Promise<
 
     return data as T;
 }
+const TOKEN_KEY = "accessToken";
+
+export function setAccessToken(token: string): void {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function clearAccessToken(): void {
+    if (typeof window === "undefined") return;
+    localStorage.removeItem(TOKEN_KEY);
+}
+
+export function isLoggedIn(): boolean {
+    return !!getAccessToken();
+}
+export function logout(): void {
+    clearAccessToken();
+}

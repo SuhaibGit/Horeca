@@ -21,6 +21,7 @@ type SignUpStep =
 
 export default function SignupPage() {
   const [step, setStep] = useState<SignUpStep>("signup");
+  const router = useRouter();
 
   // Multi-step global form state
   const [formData, setFormData] = useState({
@@ -54,6 +55,11 @@ export default function SignupPage() {
 
   // Code input references for automatic focus shifting in Step 2
   const codeRefs = useRef<(HTMLInputElement | null)[]>([]);
+  useEffect(() => {
+    if (getAccessToken()) {
+      router.replace("/dashboard");
+    }
+  }, [router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
